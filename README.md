@@ -3,8 +3,9 @@
 纯 MoonBit 实现的 Opus 音频解码库：零 C 依赖、零 FFI，可编译到 wasm-gc、js 与 native。
 
 > **当前状态：进行中。** 已完成 Ogg Opus 容器解封装（RFC 7845：页解析、跨页
-> packet 重组、OpusHead/OpusTags 解析与页序校验）；音频解码（RFC 6716 的
-> SILK / CELT）仍在开发中，尚未提供 PCM 输出。
+> packet 重组、OpusHead/OpusTags 解析与页序校验）与音频包结构解析
+> （RFC 6716 §3：TOC、code 0–3 帧打包、CBR/VBR、填充与畸形包分类）；
+> 音频解码（SILK / CELT 系数层）仍在开发中，尚未提供 PCM 输出。
 
 ## 功能
 
@@ -13,6 +14,9 @@
   链式流拒绝、OpusHead 各字段合法域
 - `OpusHead` / `OpusTags` 解析：声道、pre-skip、输入采样率、输出增益、
   映射族与声道映射表、vendor 与 comments 元数据
+- RFC 6716 §3 音频包结构：TOC 配置表（32 配置的模式/带宽/帧时长）、
+  code 0–3 帧打包、单/双字节帧长编码、Opus 填充、按 [R1]–[R7] 对
+  畸形包分类拒绝
 
 ## 用法
 
@@ -33,6 +37,19 @@ fn inspect(data : Bytes) {
       "\{stream.channels()} ch, pre-skip \{stream.pre_skip()}, \{stream.packet_count()} audio packets",
     )
     Err(e) => println("not a valid Ogg Opus stream: \{e}")
+  }
+}
+```
+
+解析单个音频包的结构（RFC 6716 §3）：
+
+```moonbit
+fn inspect_packet(pkt : Bytes) {
+  match @moonopus.parse_opus_packet(pkt) {
+    Ok(p) => println(
+      "config \{p.config()}: \{p.frame_count()} frame(s), \{p.duration_48k()} samples @48k",
+    )
+    Err(e) => println("malformed packet: \{e}")
   }
 }
 ```
