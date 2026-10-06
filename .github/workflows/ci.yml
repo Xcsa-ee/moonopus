@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check-build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      # js 后端要 Node 才能跑，先装好
+      - name: 安装 Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
+      - name: 安装 MoonBit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: MoonBit 版本
+        run: moon version
+
+      - name: 更新注册表索引
+        run: moon update
+
+      - name: 格式检查
+        run: moon fmt --check
+
+      - name: 检查
+        run: moon check --target wasm-gc --deny-warn
+
+      - name: 构建
+        run: moon build --target wasm-gc
+
+      - name: 测试
+        run: moon test --target wasm-gc
+
+      # 容器层不依赖后端特性，js 后端应得到同样的结果
+      - name: 测试（js 后端）
+        run: moon test --target js
