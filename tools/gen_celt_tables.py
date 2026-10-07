@@ -346,6 +346,16 @@ def main():
 
     spread_icdf = pdf_to_icdf(*fp["spread"])
 
+    # §4.3.4.5 的 sequency 排列。RFC 正文只说「the decoder uses the
+    # sequency order」，不给数值——数值只存在于参考实现，所以这张表只能
+    # 单源提取，靠结构断言兜底：参考实现的访问方式是 `ordery_table+stride-2`
+    # 取 stride 项，各组必须恰好拼满整表、且是 0..s-1 的一个排列。
+    ordery = extract_array(read_src("celt_bands.c"), "ordery_table")
+    assert len(ordery) == 30, f"ordery_table {len(ordery)} != 30"
+    for s in (2, 4, 8, 16):
+        grp = ordery[s - 2: s - 2 + s]
+        assert sorted(grp) == list(range(s)), f"ordery stride {s}: {grp}"
+
     lines = [
         "// 由 tools/gen_celt_tables.py 生成，请勿手改。",
         "//",
@@ -437,6 +447,12 @@ def main():
         "cel_spread_icdf", spread_icdf, "int",
         "频谱扩展决策的 icdf（4 项 → 0..3），由 RFC Table 56 的 {7,2,21,2}/32 "
         "累积取补得到，与参考实现的 spread_icdf 逐项相等。",
+    )
+    emit_flat(
+        "cel_orderery", ordery, "int",
+        "TF 变换重排用的 sequency 排列（§4.3.4.5，celt/bands.c ordery_table），"
+        "按 stride=2/4/8/16 分组、组偏移 stride-2 拼成 30 项。每组是 0..s-1 的"
+        "一个排列；RFC 只提「sequency order」不列数值，故为单源表。",
     )
 
     out = os.path.join(

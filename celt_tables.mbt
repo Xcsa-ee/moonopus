@@ -112,3 +112,10 @@ let cel_tf_select_table : Array[Int] = [
 ///|
 /// 频谱扩展决策的 icdf（4 项 → 0..3），由 RFC Table 56 的 {7,2,21,2}/32 累积取补得到，与参考实现的 spread_icdf 逐项相等。
 let cel_spread_icdf : Array[Int] = [25, 23, 2, 0]
+
+///|
+/// TF 变换重排用的 sequency 排列（§4.3.4.5，celt/bands.c ordery_table），按 stride=2/4/8/16 分组、组偏移 stride-2 拼成 30 项。每组是 0..s-1 的一个排列；RFC 只提「sequency order」不列数值，故为单源表。
+let cel_orderery : Array[Int] = [
+  1, 0, 3, 0, 2, 1, 7, 0, 4, 3, 6, 1, 5, 2, 15, 0, 8, 7, 12, 3, 11, 4, 14, 1, 9,
+  6, 13, 2, 10, 5,
+]
