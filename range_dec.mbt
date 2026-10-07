@@ -174,27 +174,42 @@ pub fn RangeDecoder::decode_icdf(
 }
 
 ///|
-/// ec_dec_uint()：解 0..ft-1 的均匀整数（§4.1.5）。
+/// ec_dec_uint()：解 0..ft-1 的均匀整数（§4.1.5）。适用于 ft ≤ 2**31-1。
 ///
 /// ftb<=8 时直接解一个符号；否则高 8 位走范围码、余位走 raw bits。
 /// 结果可能超出 0..ft-1，此时按 §4.1.5 视为帧损坏（取模退回）。
 pub fn RangeDecoder::decode_uint(self : RangeDecoder, ft : Int) -> Int {
+  self.decode_uint64(ft.to_int64()).to_int()
+}
+
+///|
+/// ec_dec_uint() 的 64 位版本：ft 可达 2**32。
+///
+/// 为什么需要——PVQ 的码本按 32 bits 设计（RFC §4.3.4.4：codebook 上限
+/// 32 bits；cwrs.c 注释：K=128 或 whichever fits in 32 bits），而 V(N,K)
+/// 对 (96,5) 这类组合就已越过 Int32 上限。Int 版本据此转发，保证只有一份
+/// 实现。
+///
+/// 中间量 top_ft 与高 8 位的 hi 都不超过 257，可直接复用现有解码路径；
+/// 只有末尾拼接 raw bits 那一步需要 64 位。
+pub fn RangeDecoder::decode_uint64(self : RangeDecoder, ft : Int64) -> Int64 {
   let mut ftb = 0
-  let mut m = ft - 1
-  while m > 0 {
+  let mut m = ft - 1L
+  while m > 0L {
     ftb += 1
     m = m >> 1
   }
   if ftb <= 8 {
-    let k = self.decode(ft)
-    self.update(k, k + 1, ft)
-    k
+    let k = self.decode(ft.to_int())
+    self.update(k, k + 1, ft.to_int())
+    k.to_int64()
   } else {
-    let top_ft = ((ft - 1) >> (ftb - 8)) + 1
-    let hi = self.decode(top_ft)
-    self.update(hi, hi + 1, top_ft)
+    let top_ft = ((ft - 1L) >> (ftb - 8)) + 1L
+    let hi = self.decode(top_ft.to_int())
+    self.update(hi, hi + 1, top_ft.to_int())
     let lo = self.dec_bits(ftb - 8)
-    ((hi << (ftb - 8)) | lo) % ft
+    // 先转 64 位再移位：ftb 达 32 时 hi<<24 可到 4.3e9，超出 Int32
+    ((hi.to_int64() << (ftb - 8)) | lo.to_int64()) % ft
   }
 }
 
