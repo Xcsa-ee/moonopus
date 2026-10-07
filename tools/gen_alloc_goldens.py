@@ -158,7 +158,7 @@ def build_cases():
         mode = ["none", "head", "scattered", "tail"][seed % 4]
         start, end = (5, 17) if seed % 7 == 0 else (0, NB_EBANDS)
         total = [None, 300000, 600000][seed % 3]
-        c = Case("s%d" % seed, f"覆盖搜索 {seed}", rand_bytes(nbytes, seed),
+        c = Case("al%d" % seed, f"覆盖搜索 {seed}", rand_bytes(nbytes, seed),
                  mode)
         c.alloc(start, end, trim, lm, total)
         new = [k for k in c.diag if k in need and k not in diag]

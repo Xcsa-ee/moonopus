@@ -53,7 +53,7 @@ def build_cases():
 
     def add(label, nbytes, seed, frame_bytes, start, lm):
         nonlocal seq
-        c = Case("h%d" % seq, label, rand_bytes(nbytes, seed), frame_bytes,
+        c = Case("fh%d" % seq, label, rand_bytes(nbytes, seed), frame_bytes,
                  start, lm)
         merge(diag, c.diag)
         cases.append(c)
@@ -86,7 +86,7 @@ def build_cases():
         frame_bytes = [2, 3, 4, 6, 8, 16, 32, 128][seed % 8]
         lm = [0, 1, 2, 3][seed % 4]
         start = 5 if seed % 5 == 0 else 0
-        c = Case("s%d" % seed, f"覆盖搜索 {seed}", rand_bytes(64, seed),
+        c = Case("fs%d" % seed, f"覆盖搜索 {seed}", rand_bytes(64, seed),
                  frame_bytes, start, lm)
         new = [k for k in c.diag if k in need and k not in diag]
         if new:
@@ -105,7 +105,7 @@ def build_cases():
             d = {}
             r = decode_frame_header(dec, 64, 0, 3, d)
             if r["silence"] and "h_silence_bit" in d:
-                c = Case("z0", "定向搜到的静音帧", data, 64, 0, 3)
+                c = Case("fz0", "定向搜到的静音帧", data, 64, 0, 3)
                 merge(diag, c.diag)
                 cases.append(c)
                 break

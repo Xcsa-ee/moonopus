@@ -96,7 +96,7 @@ def build_cases():
 
     def add(label, nbytes, seed, start, end, lm):
         nonlocal seq
-        c = Case("f%d" % seq, label, rand_bytes(nbytes, seed))
+        c = Case("af%d" % seq, label, rand_bytes(nbytes, seed))
         c.flags(start, end, lm)
         merge(diag, c.diag)
         cases.append(c)
@@ -121,7 +121,7 @@ def build_cases():
         nbytes = [1, 2, 4, 8, 16, 64, 256, 512][seed % 8]
         lm = [0, 1, 2, 3][seed % 4]
         start, end = (5, 17) if seed % 6 == 0 else (0, NB_EBANDS)
-        c = Case("g%d" % seed, f"覆盖搜索 {seed}", rand_bytes(nbytes, seed))
+        c = Case("ag%d" % seed, f"覆盖搜索 {seed}", rand_bytes(nbytes, seed))
         c.flags(start, end, lm)
         new = [k for k in c.diag if k in need and k not in diag]
         if new:
@@ -139,7 +139,7 @@ def build_cases():
         ]:
             data, fit = greedy_fanout(start, end, lm, nbytes, rs)
             if fit >= 4:
-                c = Case("h%d" % len(cases),
+                c = Case("ah%d" % len(cases),
                          f"贪心连击 boost {nbytes}B lm={lm}", data)
                 c.flags(start, end, lm)
                 merge(diag, c.diag)

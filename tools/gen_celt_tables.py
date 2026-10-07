@@ -327,9 +327,24 @@ def main():
     assert pdf_to_icdf(*fp["tapset"]) == tapset_icdf, (
         f"Table 56 tapset vs celt_celt.h: "
         f"{pdf_to_icdf(*fp['tapset'])} != {tapset_icdf}")
-    # spread 属 PVQ 阶段，暂不输出，但先确认 PDF 与参考实现对得上
+    # spread：PDF 与参考实现的表对上之后才输出
     assert pdf_to_icdf(*fp["spread"]) == extract_array(
         read_src("celt_celt.h"), "spread_icdf"), "Table 56 spread mismatch"
+
+    # TF 调整表：RFC Table 60-63 是「组(4) × 帧长(4) × tf_res(2)」，参考实现
+    # 存成 [LM][4*isTransient + 2*tf_select + tf_res]，转置后逐项比对。
+    tf_src = extract_array(read_src("celt_celt.c"), "tf_select_table")
+    assert len(tf_src) == 4 * 8, f"tf_select_table {len(tf_src)}"
+    tf_table = [0] * 32
+    for g in range(4):            # 组：transient×tf_select
+        for lm in range(4):       # 行：帧长
+            row = rfc["tf"][g * 4 + lm]   # (帧长, tf_res=0, tf_res=1)
+            assert row[0] == [2.5, 5, 10, 20][lm], f"row {row} vs LM {lm}"
+            tf_table[lm * 8 + g * 2] = row[1]
+            tf_table[lm * 8 + g * 2 + 1] = row[2]
+    assert tf_table == tf_src, f"Table 60-63 vs tf_select_table: {tf_table} != {tf_src}"
+
+    spread_icdf = pdf_to_icdf(*fp["spread"])
 
     lines = [
         "// 由 tools/gen_celt_tables.py 生成，请勿手改。",
@@ -411,6 +426,17 @@ def main():
         "cel_tapset_icdf", tapset_icdf, "int",
         "pitch post-filter 的 tapset icdf（3 项），RFC Table 56 的 {2,1,1}/4 "
         "累积取补得到，与参考实现的 tapset_icdf 逐项相等。",
+    )
+    emit_flat(
+        "cel_tf_select_table", tf_table, "int",
+        "TF 调整表（§4.3.1，RFC Table 60-63），按 [LM][4*transient + "
+        "2*tf_select + tf_res] 展平的 4×8。正值表示更好的频率分辨率，"
+        "负值表示更好的时间分辨率；与参考实现的 tf_select_table 逐项相等。",
+    )
+    emit_flat(
+        "cel_spread_icdf", spread_icdf, "int",
+        "频谱扩展决策的 icdf（4 项 → 0..3），由 RFC Table 56 的 {7,2,21,2}/32 "
+        "累积取补得到，与参考实现的 spread_icdf 逐项相等。",
     )
 
     out = os.path.join(

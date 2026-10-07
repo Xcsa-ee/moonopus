@@ -101,3 +101,14 @@ let cel_trim_icdf : Array[Int] = [126, 124, 119, 109, 87, 41, 19, 9, 4, 2, 0]
 ///|
 /// pitch post-filter 的 tapset icdf（3 项），RFC Table 56 的 {2,1,1}/4 累积取补得到，与参考实现的 tapset_icdf 逐项相等。
 let cel_tapset_icdf : Array[Int] = [2, 1, 0]
+
+///|
+/// TF 调整表（§4.3.1，RFC Table 60-63），按 [LM][4*transient + 2*tf_select + tf_res] 展平的 4×8。正值表示更好的频率分辨率，负值表示更好的时间分辨率；与参考实现的 tf_select_table 逐项相等。
+let cel_tf_select_table : Array[Int] = [
+  0, -1, 0, -1, 0, -1, 0, -1, 0, -1, 0, -2, 1, 0, 1, -1, 0, -2, 0, -3, 2, 0, 1, -1,
+  0, -2, 0, -3, 3, 0, 1, -1,
+]
+
+///|
+/// 频谱扩展决策的 icdf（4 项 → 0..3），由 RFC Table 56 的 {7,2,21,2}/32 累积取补得到，与参考实现的 spread_icdf 逐项相等。
+let cel_spread_icdf : Array[Int] = [25, 23, 2, 0]
