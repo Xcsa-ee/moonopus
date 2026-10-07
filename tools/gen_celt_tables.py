@@ -17,6 +17,7 @@ RFC 6716 §4.3.3 明确要求比特分配 bit-exact，而 caps 表等数据 RFC 
 输出：celt_tables.mbt（生产源文件，解码实现与测试共用）
 """
 import os
+import math
 import re
 import sys
 
@@ -231,6 +232,28 @@ def main():
     assert all(v * 32768.0 == int(v * 32768.0) for v in q15), f"not Q15: {q15}"
     assert all(repr(float(v)) and float(repr(v)) == v for v in q15), "repr lossy"
 
+    # 比特分配（§4.3.3）要用的两张表，各自与 RFC 正文做交叉核对——两边
+    # 来源不同（RFC 正文 vs 参考实现源码），对不上说明有一侧读错了。
+    rfc = parse_rfc_tables(read_rfc())
+    alloc_vectors = extract_array(read_src("celt_modes.c"), "band_allocation")
+    log_n = extract_array(read_src("celt_static_modes_float.h"), "logN400")
+    assert len(alloc_vectors) == 11 * 21, f"band_allocation {len(alloc_vectors)}"
+    assert len(log_n) == 21, f"logN400 {len(log_n)}"
+    # RFC Table 57 是「带 × q」，band_allocation 是「q × 带」，转置后逐项
+    # 必须相等（本模式 Fs=400×120=48000 命中参考实现的 standard mode 分支，
+    # allocVectors 即 band_allocation 原样使用，不做插值）。
+    for b in range(21):
+        for q in range(11):
+            assert rfc["alloc"][b][q] == alloc_vectors[q * 21 + b], (
+                f"Table 57 mismatch at band {b} q {q}: "
+                f"{rfc['alloc'][b][q]} != {alloc_vectors[q * 21 + b]}")
+    # logN 是 log2(带宽) 的 8 倍向上取整；带宽取自 RFC Table 55 的 2.5ms
+    # 列，故这条断言把 logN 也锚在了规范正文上。
+    for i in range(21):
+        n = rfc["band_bins"][i][0]
+        assert log_n[i] == math.ceil(8 * math.log2(n)), (
+            f"logN[{i}]={log_n[i]} != ceil(8*log2({n}))")
+
     lines = [
         "// 由 tools/gen_celt_tables.py 生成，请勿手改。",
         "//",
@@ -293,6 +316,15 @@ def main():
         "cel_cache_caps50", caps, "byte",
         "比特分配 caps 表 [168]（§4.3.3 指定直接使用的表数据）。",
     )
+    emit_flat(
+        "cel_alloc_vectors", alloc_vectors, "int",
+        "静态分配表（§4.3.3 Table 57），按 q 主序 × 21 带展开的 11×21；"
+        "单位 1/32 bit per MDCT bin。与 RFC 正文转置后逐项相等（见上）。",
+    )
+    emit_flat(
+        "cel_log_n", log_n, "int",
+        "log2(带宽)×8 向上取整（21 项），逐项等于由 RFC Table 55 带宽推出的值。",
+    )
 
     out = os.path.join(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
@@ -312,7 +344,6 @@ def main():
     # Table 57（静态分配）与 Table 60-63（TF 调整）在这里一并解析并断言
     # 结构，但要等比特分配 / 瞬态解码落地后才会有消费方，故暂不输出，
     # 免得留下未使用的顶层值。
-    rfc = parse_rfc_tables(read_rfc())
     band_bins = [v for row in rfc["band_bins"] for v in row]
     assert len(band_bins) == 21 * 4, len(band_bins)
     rfc_out = [
