@@ -1,0 +1,102 @@
+# 第三方表数据许可（xiph/opus）
+
+本仓库的 `celt_tables.mbt` 与 `celt_mode.mbt` 含有提取自
+[xiph/opus](https://github.com/xiph/opus) 参考实现的**表数据**。
+
+RFC 6716 §4.3.3 要求比特分配 bit-exact，并明文要求实现者「直接使用同一
+表数据」（原文：*Implementations are expected to simply use the same table
+data*），但规范正文并未列出这些数值，因此只能取自参考实现。
+
+## 提取了什么、来自哪个文件
+
+| 本仓库符号 | 来源文件中的符号 |
+| --- | --- |
+| `cel_e_prob_model` | `celt/quant_bands.c` → `e_prob_model` |
+| `cel_pred_coef` | `celt/quant_bands.c` → `pred_coef`（浮点分支） |
+| `cel_beta_coef` | `celt/quant_bands.c` → `beta_coef`（浮点分支） |
+| `CEL_BETA_INTRA` | `celt/quant_bands.c` → `beta_intra`（浮点分支） |
+| `cel_small_energy_icdf` | `celt/quant_bands.c` → `small_energy_icdf` |
+| `cel_cache_caps50` | `celt/static_modes_float.h` → `cache_caps50` |
+| `cel_eband5ms` | `celt/modes.c` → `eband5ms` |
+
+提取由 `tools/gen_celt_tables.py` 机械完成并附结构断言，不是手工转录；
+数值一致性另由测试从 RFC 正文侧独立交叉核对（见 `celt_rfc_goldens_wbtest.mbt`）。
+
+## 上游许可证（opus COPYING）
+
+```
+Copyright 2001-2023 Xiph.Org, Skype Limited, Octasic,
+                    Jean-Marc Valin, Timothy B. Terriberry,
+                    CSIRO, Gregory Maxwell, Mark Borgerding,
+                    Erik de Castro Lopo, Mozilla, Amazon
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+- Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+
+- Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+
+- Neither the name of Internet Society, IETF or IETF Trust, nor the
+names of specific contributors, may be used to endorse or promote
+products derived from this software without specific prior written
+permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Opus is subject to the royalty-free patent licenses which are
+specified at:
+
+Xiph.Org Foundation:
+https://datatracker.ietf.org/ipr/1524/
+
+Microsoft Corporation:
+https://datatracker.ietf.org/ipr/1914/
+
+Broadcom Corporation:
+https://datatracker.ietf.org/ipr/1526/
+```
+
+以上为上游 COPYING 的原文（经 `gh api repos/xiph/opus/contents/COPYING`
+取得后逐字保留）。
+
+## 来源文件自带的版权声明
+
+`celt/quant_bands.c` 与 `celt/modes.c` 的文件头另有各自的版权声明：
+
+```
+/* Copyright (c) 2007-2008 CSIRO
+   Copyright (c) 2007-2009 Xiph.Org Foundation
+   Written by Jean-Marc Valin */
+```
+
+```
+/* Copyright (c) 2007-2008 CSIRO
+   Copyright (c) 2007-2009 Xiph.Org Foundation
+   Copyright (c) 2008 Gregory Maxwell
+   Written by Jean-Marc Valin and Gregory Maxwell */
+```
+
+这两个文件的正文使用的是只含前两条再分发条款的形式（无背书限制条款）；
+`celt/static_modes_float.h` 是 dump_modes.c 自动生成的文件，未附文件级
+声明，按上游 COPYING 处理。本仓库按更严格的一侧执行：保留上述全部版权
+声明，并在再分发时完整携带 COPYING 文本。
+
+## 本仓库的其余部分
+
+除上表列出的表数据外，本仓库代码均为按 RFC 6716 / RFC 7845 独立实现，
+以 Apache-2.0 发布（见 `LICENSE`）。
