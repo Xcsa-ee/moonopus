@@ -17,6 +17,8 @@ CRC 自检：本脚本使用逐位 MSB-first 实现（多项式 0x04C11DB7，初
 import os
 import sys
 
+from _fmt import moon_fmt
+
 # ---------------------------------------------------------------------------
 # 独立 CRC 实现（逐位，非查表，与 MoonBit 端实现路径不同）
 # ---------------------------------------------------------------------------
@@ -433,3 +435,4 @@ with open(os.path.join(root, "fixtures_wbtest.mbt"), "w", encoding="utf-8") as f
 print(f"[ok] wrote fixtures_crc_wbtest.mbt / fixtures_wbtest.mbt "
       f"({sum(len(b) for b in VALID.values())} valid bytes, "
       f"{sum(len(b) for b in INVALID.values())} invalid bytes)")
+moon_fmt()

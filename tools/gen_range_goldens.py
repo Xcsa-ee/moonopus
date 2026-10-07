@@ -19,6 +19,7 @@
 """
 import os
 import random
+from _fmt import moon_fmt  # noqa: E402
 
 MASK31 = 0x7FFFFFFF
 
@@ -125,6 +126,11 @@ class RangeDecoder:
             return 0
         self._update(ft - 1, ft, ft)
         return 1
+
+    def decode_bin_fs(self, ftb):
+        # §4.1.3.1：ec_decode_bin() 只算 fs、**不推进状态**，调用方自行
+        # 用 (fl, fh, ft) 调 update——Laplace 解码正依赖这一点。
+        return self._decode(1 << ftb)
 
     def decode_icdf(self, icdf, ftb):
         ft = 1 << ftb
@@ -293,6 +299,8 @@ def emit_play(name, ops, trace):
     """
     up = name.upper()
     out = [
+        "",
+        "///|",
         f"fn play_{name}(dec : RangeDecoder) -> Unit raise {{",
         f"  // 比特流见 RANGE_{up}_BITS；轨迹由 tools/gen_range_goldens.py",
         f"  // 的独立参考解码端算出，本函数重放同一操作并逐项比对。",
@@ -360,6 +368,7 @@ def main():
     with open(out, "w", encoding="utf-8") as f:
         f.write("".join(lines))
     print(f"[ok] {len(cases)} cases, wrote range_goldens_wbtest.mbt")
+    moon_fmt()
 
 
 if __name__ == "__main__":
