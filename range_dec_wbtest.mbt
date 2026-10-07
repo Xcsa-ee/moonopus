@@ -66,6 +66,11 @@ fn RangeDecoder::expect_bit(
 }
 
 ///|
+/// 金标里的 `bin` 操作：ftb 位的**二元上下文**解码（decode + update），
+/// 与 §4.1.3.2 的 ec_dec_bit_logp 同语义。
+///
+/// 注意它不是 §4.1.3.1 的 ec_decode_bin（那个只算 fs、不更新状态，见
+/// `RangeDecoder::decode_bin_fs`）——两者曾被混为一谈，故在此区分。
 fn RangeDecoder::expect_bin(
   self : RangeDecoder,
   ftb : Int,
@@ -75,9 +80,9 @@ fn RangeDecoder::expect_bin(
   want_tell : Int,
   want_tell_frac : Int,
 ) -> Unit raise {
-  let got = self.decode_bin(ftb)
+  let got = self.decode_bit_logp(ftb)
   self.check_state(
-    "decode_bin", want_sym, want_rng, want_val, want_tell, want_tell_frac, got,
+    "decode_bit_logp", want_sym, want_rng, want_val, want_tell, want_tell_frac, got,
   )
 }
 

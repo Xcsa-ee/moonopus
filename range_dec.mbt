@@ -140,9 +140,13 @@ pub fn RangeDecoder::decode_bit_logp(self : RangeDecoder, logp : Int) -> Int {
 }
 
 ///|
-/// ec_decode_bin()：以 ftb 为参数的二元解码，等价于 ft = 1<<ftb（§4.1.3.1）。
-pub fn RangeDecoder::decode_bin(self : RangeDecoder, ftb : Int) -> Int {
-  self.decode_bit_logp(ftb)
+/// ec_decode_bin()：返回 `fs = ec_decode(1<<ftb)`，**不更新状态**（§4.1.3.1）。
+///
+/// 调用方自行决定用哪个 (fl, fh, ft) 调 `update`——Laplace 解码正是先取
+/// `fs` 再自行构造目标区间（见 §4.3.2 的能量解码）。这与
+/// `decode_bit_logp`（decode+update 的二元快捷路径）是两回事。
+pub fn RangeDecoder::decode_bin_fs(self : RangeDecoder, ftb : Int) -> Int {
+  self.decode(1 << ftb)
 }
 
 ///|
