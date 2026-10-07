@@ -23,6 +23,7 @@ pub struct RangeDecoder {
   mut val : Int64
   mut rng : Int64
   mut raw_read : Int
+  mut skipped : Int
 }
 
 ///|
@@ -41,6 +42,7 @@ pub fn RangeDecoder::new(data : Bytes) -> RangeDecoder {
     val: (127 - (b0 >> 1)).to_int64(),
     rng: 128L,
     raw_read: 0,
+    skipped: 0,
   }
   decoder.normalize()
   decoder
@@ -217,11 +219,25 @@ pub fn RangeDecoder::dec_bits(self : RangeDecoder, nbits : Int) -> Int {
 }
 
 ///|
-/// 已消费的总位数 nbits_total（§4.1.6）：整字节 + 1 位保留 + raw bits。
+/// 已消费的总位数 nbits_total（§4.1.6）：整字节 + 1 位保留 + raw bits，
+/// 再加静音帧一次性跳过的位数。
 ///
 /// 初始化完成后为 33（= 8*4 + 1），与规范给的初值一致。
 fn RangeDecoder::nbits_total(self : RangeDecoder) -> Int {
-  8 * self.offs + 1 + self.raw_read
+  8 * self.offs + 1 + self.raw_read + self.skipped
+}
+
+///|
+/// 把位计数一次性推进到 `nbits`，**不消费任何比特**。
+///
+/// 对应静音帧的处理：参考实现令 nbits_total += nbits - ec_tell()，使
+/// ec_tell() 之后返回帧长，于是帧首后续几个符号的门控（tell+16 之类）全部
+/// 落空、一个都不读。位置状态（rng/val/字节游标）保持不变。
+pub fn RangeDecoder::skip_bits_to(self : RangeDecoder, nbits : Int) -> Unit {
+  let cur = self.nbits_total()
+  if nbits > cur {
+    self.skipped += nbits - cur
+  }
 }
 
 ///|

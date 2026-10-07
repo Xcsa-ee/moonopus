@@ -97,3 +97,7 @@ let cel_log_n : Array[Int] = [
 ///|
 /// allocation trim 的 icdf（11 项 → 0..10），由 RFC Table 58 的 PDF 累积取补得到，与参考实现的 trim_icdf 逐项相等。
 let cel_trim_icdf : Array[Int] = [126, 124, 119, 109, 87, 41, 19, 9, 4, 2, 0]
+
+///|
+/// pitch post-filter 的 tapset icdf（3 项），RFC Table 56 的 {2,1,1}/4 累积取补得到，与参考实现的 tapset_icdf 逐项相等。
+let cel_tapset_icdf : Array[Int] = [2, 1, 0]

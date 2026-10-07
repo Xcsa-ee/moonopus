@@ -122,6 +122,26 @@ def parse_rfc_tables(text):
     if not trim_pdf or len(trim_pdf) != 11 or trim_den != 128:
         raise SystemExit(f"Table 58 bad: {trim_pdf}/{trim_den}")
 
+    # Table 56: 帧内符号顺序与 PDF。它把帧首几个符号的 PDF 明文写出来了
+    # （silence/post-filter/transient/intra/tapset 等），可以用来校验实现里
+    # 手写的 logp 与 icdf 表——这些是最容易写错又最难从测试看出来的地方。
+    t56 = None
+    for i, ln in enumerate(lines):
+        if "Table 56" in ln and "Order of the Symbols" in ln:
+            t56 = i
+            break
+    if t56 is None:
+        raise SystemExit("Table 56 not found")
+    frame_pdfs = {}
+    for ln in lines[max(0, t56 - 70):t56]:
+        m = re.match(
+            r"\s*\|\s*([A-Za-z][\w.\- ]*?)\s*\|\s*\{([\d, ]+)\}/(\d+)", ln)
+        if m:
+            frame_pdfs[m.group(1).strip()] = (
+                [int(x) for x in m.group(2).split(",")], int(m.group(3)))
+    if len(frame_pdfs) != 10:
+        raise SystemExit(f"Table 56 PDF symbols: got {sorted(frame_pdfs)}")
+
     return {
         # 21 bands × 4 帧长（2.5/5/10/20 ms）
         "band_bins": [[r[1], r[2], r[3], r[4]] for r in band_rows],
@@ -133,6 +153,8 @@ def parse_rfc_tables(text):
         # Table 58：allocation trim 的 PDF（11 项，分母 128）
         "trim_pdf": trim_pdf,
         "trim_den": trim_den,
+        # Table 56：帧内符号的 PDF 型条目（符号名 → (PDF, 分母)）
+        "frame_pdfs": frame_pdfs,
     }
 
 
@@ -284,6 +306,31 @@ def main():
         derived.append(rfc["trim_den"] - acc)
     assert derived == trim_icdf, f"Table 58 vs trim_icdf: {derived} != {trim_icdf}"
 
+    # Table 56 的对照。decode_bit_logp(logp) 给低概率符号留的区间宽度是
+    # 1/2**logp，故 PDF 的小项必须是 1、分母必须是 2**logp——帧首四个符号
+    # 的 logp 就这样锚在规范正文上，免得实现里手写 15/1/3 时写岔。
+    fp = rfc["frame_pdfs"]
+    for name, logp in [("silence", 15), ("post-filter", 1),
+                       ("transient", 3), ("intra", 3)]:
+        pdf, den = fp[name]
+        assert len(pdf) == 2 and pdf[1] == 1, f"Table 56 {name}: {pdf}"
+        assert den == 1 << logp, f"Table 56 {name}: 2**{logp} != {den}"
+
+    def pdf_to_icdf(pdf, den):
+        acc, out = 0, []
+        for p in pdf:
+            acc += p
+            out.append(den - acc)
+        return out
+
+    tapset_icdf = extract_array(read_src("celt_celt.h"), "tapset_icdf")
+    assert pdf_to_icdf(*fp["tapset"]) == tapset_icdf, (
+        f"Table 56 tapset vs celt_celt.h: "
+        f"{pdf_to_icdf(*fp['tapset'])} != {tapset_icdf}")
+    # spread 属 PVQ 阶段，暂不输出，但先确认 PDF 与参考实现对得上
+    assert pdf_to_icdf(*fp["spread"]) == extract_array(
+        read_src("celt_celt.h"), "spread_icdf"), "Table 56 spread mismatch"
+
     lines = [
         "// 由 tools/gen_celt_tables.py 生成，请勿手改。",
         "//",
@@ -359,6 +406,11 @@ def main():
         "cel_trim_icdf", derived, "int",
         "allocation trim 的 icdf（11 项 → 0..10），由 RFC Table 58 的 PDF "
         "累积取补得到，与参考实现的 trim_icdf 逐项相等。",
+    )
+    emit_flat(
+        "cel_tapset_icdf", tapset_icdf, "int",
+        "pitch post-filter 的 tapset icdf（3 项），RFC Table 56 的 {2,1,1}/4 "
+        "累积取补得到，与参考实现的 tapset_icdf 逐项相等。",
     )
 
     out = os.path.join(

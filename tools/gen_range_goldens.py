@@ -48,6 +48,7 @@ class RangeDecoder:
         self.rng = 0
         self.raw_pos = self.len   # raw bits 从尾部反向读
         self.raw_bits_read = 0
+        self.skipped = 0          # 静音帧一次性跳过的位数
         # §4.1.1 初始化
         b0 = data[0] if self.len > 0 else 0
         self.leftover = b0 & 1
@@ -175,8 +176,14 @@ class RangeDecoder:
 
     def nbits_total(self):
         # §4.1.6：整位数含缓冲位；初始化完成后为 33（= 8*4 + 1），
-        # 每轮 renormalization +8，raw bits 读取数计入。
-        return 8 * self.offs + 1 + self.raw_bits_read
+        # 每轮 renormalization +8，raw bits 读取数计入，再加静音帧跳过的位。
+        return 8 * self.offs + 1 + self.raw_bits_read + self.skipped
+
+    def skip_bits_to(self, nbits):
+        """把位计数一次性推进到 nbits，不消费比特（静音帧的「假装读完」）。"""
+        cur = self.nbits_total()
+        if nbits > cur:
+            self.skipped += nbits - cur
 
     def tell(self):
         # §4.1.6.1：nbits_total - ilog(rng)
