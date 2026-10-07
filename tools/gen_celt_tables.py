@@ -104,6 +104,24 @@ def parse_rfc_tables(text):
         raise SystemExit(f"Table 60-63: frame-size order wrong: "
                          f"{[r[0] for r in tf_rows]}")
 
+    # Table 58: allocation trim 的 PDF，取表题之前最近的一个 {…}/N
+    trim_idx = None
+    for i, ln in enumerate(lines):
+        if "Table 58" in ln and "Trim" in ln:
+            trim_idx = i
+            break
+    if trim_idx is None:
+        raise SystemExit("Table 58 not found")
+    trim_pdf = trim_den = None
+    for ln in reversed(lines[:trim_idx]):
+        m = re.search(r"\{\s*([\d,\s]+)\}\s*/\s*(\d+)", ln)
+        if m:
+            trim_pdf = [int(x) for x in m.group(1).split(",")]
+            trim_den = int(m.group(2))
+            break
+    if not trim_pdf or len(trim_pdf) != 11 or trim_den != 128:
+        raise SystemExit(f"Table 58 bad: {trim_pdf}/{trim_den}")
+
     return {
         # 21 bands × 4 帧长（2.5/5/10/20 ms）
         "band_bins": [[r[1], r[2], r[3], r[4]] for r in band_rows],
@@ -112,6 +130,9 @@ def parse_rfc_tables(text):
         # 四组 TF 调整：non-transient/tf0, non-transient/tf1,
         #              transient/tf0, transient/tf1
         "tf": tf_rows,
+        # Table 58：allocation trim 的 PDF（11 项，分母 128）
+        "trim_pdf": trim_pdf,
+        "trim_den": trim_den,
     }
 
 
@@ -253,6 +274,15 @@ def main():
         n = rfc["band_bins"][i][0]
         assert log_n[i] == math.ceil(8 * math.log2(n)), (
             f"logN[{i}]={log_n[i]} != ceil(8*log2({n}))")
+    # Table 58 的 PDF 累积后取补，即 ec_dec_icdf 用的表；必须与参考实现的
+    # trim_icdf 逐项相等（两边来源不同：RFC 正文 vs celt_celt.h）。
+    trim_icdf = extract_array(read_src("celt_celt.h"), "trim_icdf")
+    assert len(trim_icdf) == 11, f"trim_icdf {len(trim_icdf)}"
+    derived, acc = [], 0
+    for p in rfc["trim_pdf"]:
+        acc += p
+        derived.append(rfc["trim_den"] - acc)
+    assert derived == trim_icdf, f"Table 58 vs trim_icdf: {derived} != {trim_icdf}"
 
     lines = [
         "// 由 tools/gen_celt_tables.py 生成，请勿手改。",
@@ -324,6 +354,11 @@ def main():
     emit_flat(
         "cel_log_n", log_n, "int",
         "log2(带宽)×8 向上取整（21 项），逐项等于由 RFC Table 55 带宽推出的值。",
+    )
+    emit_flat(
+        "cel_trim_icdf", derived, "int",
+        "allocation trim 的 icdf（11 项 → 0..10），由 RFC Table 58 的 PDF "
+        "累积取补得到，与参考实现的 trim_icdf 逐项相等。",
     )
 
     out = os.path.join(

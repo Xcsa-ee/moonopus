@@ -93,3 +93,7 @@ let cel_alloc_vectors : Array[Int] = [
 let cel_log_n : Array[Int] = [
   0, 0, 0, 0, 0, 0, 0, 0, 8, 8, 8, 8, 16, 16, 16, 21, 21, 24, 29, 34, 36,
 ]
+
+///|
+/// allocation trim 的 icdf（11 项 → 0..10），由 RFC Table 58 的 PDF 累积取补得到，与参考实现的 trim_icdf 逐项相等。
+let cel_trim_icdf : Array[Int] = [126, 124, 119, 109, 87, 41, 19, 9, 4, 2, 0]

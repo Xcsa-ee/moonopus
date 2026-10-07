@@ -115,7 +115,8 @@ def build_cases():
     seq = 0
     for nbytes in (8, 64, 192):
         for lm in (0, 3):
-            for trim in (0, 5, 7):
+            # trim 合法范围 0..10（§4.3.3），取两端与中点
+            for trim in (0, 5, 7, 10):
                 add(f"b{seq}", f"基线 {nbytes}B lm={lm} trim={trim}",
                     nbytes, 1000 + seq, "none", 0, NB_EBANDS, trim, lm)
                 seq += 1

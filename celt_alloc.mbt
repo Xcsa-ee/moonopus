@@ -281,9 +281,9 @@ fn celt_interp_bits2pulses(
 /// 比特分配（§4.3.3）：恢复本帧每带的 PVQ 位数、细能量位与收尾优先级。
 ///
 /// `offsets` 是 dynalloc 的加成（单位 1/8 bit，长度 21），`cap` 由
-/// `celt_init_caps` 给出，`alloc_trim` 是解出的 0..7，`total` 用
-/// `celt_alloc_total` 算（单位 1/8 bit）。范围解码器会被推进——skip
-/// 决策要读符号，顺序与帧内其它符号一致。
+/// `celt_init_caps` 给出，`alloc_trim` 是解出的 0..10（§4.3.3：5 表示不加
+/// 不减），`total` 用 `celt_alloc_total` 算（单位 1/8 bit）。范围解码器会被
+/// 推进——skip 决策要读符号，顺序与帧内其它符号一致。
 pub fn celt_compute_allocation(
   dec : RangeDecoder,
   start : Int,
