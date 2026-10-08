@@ -52,6 +52,14 @@ let cel_beta_coef : Array[Double] = [
 const CEL_BETA_INTRA : Double = 0.149993896484375
 
 ///|
+/// §4.3.2 每带平均能量：编码端 amp2Log2 从对数能量里减掉它，denormalise_bands 再加回来。取自 celt/quant_bands.c 的 float 组，与同文件 Q4 组逐项相差 16 倍（见上）。
+let cel_e_means : Array[Double] = [
+  6.4375, 6.25, 5.75, 5.3125, 5.0625, 4.8125, 4.5, 4.375, 4.875, 4.6875, 4.5625,
+  4.4375, 4.875, 4.625, 4.3125, 4.5, 4.375, 4.625, 4.75, 4.4375, 3.75, 3.75, 3.75,
+  3.75, 3.75,
+]
+
+///|
 /// 小能量细化的 icdf 表（quant_bands.c small_energy_icdf）。
 let cel_small_energy_icdf : Array[Int] = [2, 1, 0]
 

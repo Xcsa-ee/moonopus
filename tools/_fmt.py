@@ -13,6 +13,24 @@ import subprocess
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+def moon_num(v):
+    """Double → MoonBit 字面量。
+
+    MoonBit 的解析器不接受 `1e-6` 这种指数写法，所以 repr 里带指数时改用
+    定点展开：34 位小数对 |v| ≥ 1e-16 恰好放得下 17 位有效数字，能精确
+    往返。往不回去就直接报错，不静默产出变了值的字面量。
+    """
+    v = float(v)
+    s = repr(v)
+    if "e" in s or "E" in s:
+        s = f"{v:.34f}".rstrip("0")
+        if s.endswith("."):
+            s += "0"
+    if float(s) != v:
+        raise ValueError(f"moon_num 无法往返: {s} != {v!r}")
+    return s
+
+
 def moon_fmt():
     try:
         subprocess.run(

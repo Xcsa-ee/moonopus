@@ -173,7 +173,7 @@ def brace_body(text, open_pos):
     raise SystemExit("unbalanced braces")
 
 
-def extract_array(text, name, prefer_frac=False):
+def extract_array(text, name, prefer_frac=False, prefer_decimal=False):
     """提取 C 数组字面量的内容（支持嵌套大括号），返回扁平数值列表。
 
     只处理我们已知的这几张表，不做通用 C 解析——出现意外格式直接报错，
@@ -181,7 +181,8 @@ def extract_array(text, name, prefer_frac=False):
 
     quant_bands.c 里 pred_coef/beta_coef 有 FIXED_POINT 与 float 两组定义，
     `prefer_frac=True` 选**自身数组体**含 `/` 的 float 组（本项目走浮点
-    解码，与 soundfile/libopus 的 float 构建一致）。
+    解码，与 soundfile/libopus 的 float 构建一致）。eMeans 的 float 组用
+    小数而非分数，故另给 `prefer_decimal=True`。
     """
     pat = re.compile(
         r"(?:static\s+)?(?:const\s+)?[\w\s\*]+?\b" + re.escape(name) +
@@ -196,6 +197,12 @@ def extract_array(text, name, prefer_frac=False):
         if not frac:
             raise SystemExit(f"table {name}: no fractional (float) definition")
         m, raw_body = frac[0]
+    elif prefer_decimal:
+        # 同名两份定义里，float 那份用小数点而不是分数（eMeans 即如此）
+        dec = [(m, b) for m, b in candidates if "." in b]
+        if not dec:
+            raise SystemExit(f"table {name}: no decimal (float) definition")
+        m, raw_body = dec[0]
     else:
         m, raw_body = candidates[0]
     body = raw_body
@@ -256,6 +263,18 @@ def main():
     beta_intra = extract_scalar(qb, "beta_intra")
     small_icdf = extract_array(qb, "small_energy_icdf")
     caps = extract_array(smf, "cache_caps50")
+
+    # §4.3.2 的每带平均能量：编码端 amp2Log2 从对数能量里减掉它，
+    # denormalise_bands 再加回来，所以它是能量解码与反归一化的衔接点。
+    # 同一文件里有 FIXED_POINT（Q4 整数）与 float 两份，取两份并要求
+    # 逐项相差恰好 16 倍——只有一份对、另一份读错，断言就会失败。
+    e_means_q4 = extract_array(qb, "eMeans")
+    e_means = extract_array(qb, "eMeans", prefer_decimal=True)
+    assert len(e_means) == 25, f"eMeans(float) {len(e_means)} != 25"
+    assert len(e_means_q4) == 25, f"eMeans(Q4) {len(e_means_q4)} != 25"
+    assert all(a == b / 16.0 for a, b in zip(e_means, e_means_q4)), (
+        "eMeans float 与 Q4 版本不一致: "
+        + str([(a, b) for a, b in zip(e_means, e_means_q4) if a != b / 16.0][:5]))
 
     # 结构断言——形状错了后面的解码必然错，先在这里拦住
     assert len(e_prob) == 4 * 2 * 42, f"e_prob_model {len(e_prob)} != 336"
@@ -407,6 +426,12 @@ def main():
     lines.append("/// 帧内能量预测的固定 beta（§4.3.2.1 的 beta=4915/32768）。")
     lines.append(f"const CEL_BETA_INTRA : Double = {float(beta_intra)!r}")
     lines.append("")
+    emit_flat(
+        "cel_e_means", e_means, "float",
+        "§4.3.2 每带平均能量：编码端 amp2Log2 从对数能量里减掉它，"
+        "denormalise_bands 再加回来。取自 celt/quant_bands.c 的 float 组，"
+        "与同文件 Q4 组逐项相差 16 倍（见上）。",
+    )
     lines.append("///|")
     lines.append("/// 小能量细化的 icdf 表（quant_bands.c small_energy_icdf）。")
     lines.append(
