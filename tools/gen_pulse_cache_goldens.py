@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""脉冲缓存金标（§4.3.4.4）：独立重建 bits2pulses/pulses2bits 的查表数据。
+"""脉冲缓存金标（§4.3.4.1）：独立重建 bits2pulses/pulses2bits 的查表数据。
 
 三条独立路径交叉：
   1. 实现侧（celt_tables.mbt 的 cel_cache_index50/cel_cache_bits50）=
@@ -341,7 +341,7 @@ def main():
     lines = [
         "// 由 tools/gen_pulse_cache_goldens.py 生成，请勿手改。",
         "//",
-        "// 脉冲缓存金标（§4.3.4.4）：本文件的表与向量由 Python 端按",
+        "// 脉冲缓存金标（§4.3.4.1）：本文件的表与向量由 Python 端按",
         "// rate.c 算法独立重建（RFC Table 55 带宽 + fits_in32 + V(N,K) 闭式），",
         "// 与实现侧从 libopus static_modes_float.h 解析的 dump_modes 静态",
         "// 产物逐项对拍通过后才产出——表结构与计数公式两条路径不同，任一侧",

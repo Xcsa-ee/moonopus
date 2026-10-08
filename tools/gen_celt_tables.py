@@ -263,7 +263,7 @@ def main():
     beta_intra = extract_scalar(qb, "beta_intra")
     small_icdf = extract_array(qb, "small_energy_icdf")
     caps = extract_array(smf, "cache_caps50")
-    # 脉冲缓存（§4.3.4.4 的 bits2pulses/pulses2bits 查表数据）：dump_modes
+    # 脉冲缓存（§4.3.4.1 的 bits2pulses/pulses2bits 查表数据）：dump_modes
     # 对标准 48 kHz 模式生成的静态产物，同文件里两份同名定义由头文件卫队
     # 去重，extract_array 取的第一份即生效的那份。
     pulse_index = extract_array(smf, "cache_index50")
@@ -464,12 +464,12 @@ def main():
     )
     emit_flat(
         "cel_cache_index50", pulse_index, "int",
-        "脉冲缓存条目索引 [5×21]（§4.3.4.4）：行 = LM+1、列 = 带号，值为"
+        "脉冲缓存条目索引 [5×21]（§4.3.4.1）：行 = LM+1、列 = 带号，值为"
         " cel_cache_bits50 中的条目起点，−1 表示该 (行, 带) 的 N=0 无效。",
     )
     emit_flat(
         "cel_cache_bits50", pulse_bits, "byte",
-        "脉冲缓存位数表 [392]（§4.3.4.4，单位 1/8 bit）：每条目首槽是"
+        "脉冲缓存位数表 [392]（§4.3.4.1，单位 1/8 bit）：每条目首槽是"
         " Kmax（≤40），其后 j=1..Kmax 槽存 位数(get_pulses(j))−1。",
     )
     emit_flat(

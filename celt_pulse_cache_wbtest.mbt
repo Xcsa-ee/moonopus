@@ -1,6 +1,6 @@
 // celt_pulse_cache_wbtest.mbt
 //
-// 位数↔脉冲换算（§4.3.4.4）的白盒测试。
+// 位数↔脉冲换算（§4.3.4.1）的白盒测试。
 //
 // 金标来自 tools/gen_pulse_cache_goldens.py：Python 端按 rate.c 的
 // compute_pulse_cache 从 RFC Table 55 带宽独立重建两张缓存表

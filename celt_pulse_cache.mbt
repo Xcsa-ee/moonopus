@@ -1,6 +1,6 @@
 // celt_pulse_cache.mbt
 //
-// 位数↔脉冲换算与脉冲缓存（RFC 6716 §4.3.4.4）。
+// 位数↔脉冲换算与脉冲缓存（RFC 6716 §4.3.4.1 Bits to Pulses）。
 //
 // 解码端从比特分配拿到的是 1/8 bit 单位的每带位数，PVQ 解码需要的是
 // 伪脉冲索引（决定 V(N,K) 的 K）——两者按缓存表换算：
@@ -37,7 +37,7 @@ pub fn celt_get_pulses(i : Int) -> Int {
 }
 
 ///|
-/// 位数（1/8 bit）→ 伪脉冲索引（§4.3.4.4，rate.h 的 bits2pulses）。
+/// 位数（1/8 bit）→ 伪脉冲索引（§4.3.4.1，rate.h 的 bits2pulses）。
 ///
 /// 查表行 = LM+1（解码 lm∈0..3 落在表行 1..4，行 0 只参与条目去重）。
 /// 输入位数先减 1 与表内「位数−1」的存法对齐，再做固定 6 轮二分夹逼；
@@ -64,7 +64,7 @@ pub fn celt_bits2pulses(band : Int, lm : Int, bits : Int) -> Int {
 }
 
 ///|
-/// 伪脉冲索引 → 位数（1/8 bit）（§4.3.4.4，rate.h 的 pulses2bits）。
+/// 伪脉冲索引 → 位数（1/8 bit）（§4.3.4.1，rate.h 的 pulses2bits）。
 ///
 /// 0 个脉冲恒为 0；其余查条目的第 q 槽再加 1（表内存的是「位数−1」）。
 pub fn celt_pulses2bits(band : Int, lm : Int, pulses : Int) -> Int {
