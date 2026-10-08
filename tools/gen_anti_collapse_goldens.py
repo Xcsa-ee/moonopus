@@ -2,10 +2,10 @@
 """生成反塌缩（RFC 6716 §4.3.5）的 MoonBit 金标。
 
 参考端在 tools/celt_anti_collapse_ref.py（独立实现），本文件负责：
-  - 用例构造与覆盖搜索（随机频谱/位图/能量，定向补覆盖键）；
-  - 反塌缩标志位 raw bit 解码的金标（载荷 + 范围解码器状态）；
-  - lcg 序列金标（celt_lcg_rand 的定点步进）；
-  - MoonBit 调用行、输入/期望字面量与 test 块的生成。
+  - 用例构造与覆盖搜索（随机频谱/位图/能量，结构性键定向配置）；
+  - 反塌缩预留位公式与标志位 raw bit 解码的金标（含解码器状态）；
+  - lcg 序列金标；
+  - MoonBit 调用行、输入字面量与 test 块的生成。
 
 用法：python tools/gen_anti_collapse_goldens.py
 输出：anti_collapse_goldens_wbtest.mbt
@@ -13,20 +13,20 @@
 import os
 import random
 import sys
-from decimal import Decimal
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from gen_range_goldens import RangeDecoder  # noqa: E402
 from celt_anti_collapse_ref import (  # noqa: E402
     anti_collapse,
+    anti_collapse_rsv,
     lcg_rand,
 )
-from celt_alloc_ref import NB_EBANDS, T  # noqa: E402
+from celt_alloc_ref import NB_EBANDS  # noqa: E402
 from _fmt import moon_fmt  # noqa: E402
 
 NEED = [
-    "a_fill", "a_no_fill_band", "a_full_fill_band", "a_lm3",
-    "a_ediff_clamp", "a_thresh_cap", "a_quirk", "a_depth0",
+    "a_lm3", "a_depth0", "a_quirk", "a_ediff_clamp", "a_thresh_cap",
+    "a_no_fill_band", "a_full_fill_band", "a_fill",
 ]
 
 
@@ -35,46 +35,36 @@ def rand_bytes(nbytes, seed):
     return bytes(rs.randrange(256) for _ in range(nbytes))
 
 
-def fmt_f(v):
-    """Double → MoonBit 字面量：非科学计数展开，零与负零归一。"""
-    if v == 0.0:
-        return "0.0"
-    s = repr(v)
-    if "e" in s or "E" in s:
-        s = str(Decimal(s))
-    return s
+def fmt_arr(vals):
+    return "[" + ", ".join(str(v) for v in vals) + "]"
+
+
+def fmt_f(vals):
+    return "[" + ", ".join(repr(float(v)) for v in vals) + "]"
 
 
 class AntiCase:
-    """反塌缩重放用例（无熵：输入全部为字面量参数）。"""
+    """反塌缩重放用例：随机造输入，参考端跑出期望频谱与覆盖键。"""
 
-    def __init__(self, name, label, lm, start, end, diag=None):
+    def __init__(self, name, label, lm, start, end, seed, cfg=None):
         self.name = name
         self.label = label
         self.lm = lm
         self.start = start
         self.end = end
-        m = 1 << lm
-        self.x = None
-        self.masks = None
-        self.loge = None
-        self.prev1 = None
-        self.prev2 = None
-        self.pulses = None
-        self.seed = 0
-        self.want = None
-        self.diag = {}
-
-    def fill_random(self, seed):
         rs = random.Random(seed)
-        m = 1 << self.lm
-        self.x = [rs.uniform(-1.0, 1.0) for _ in range(120 * m)]
+        m = 1 << lm
+        n = 120 * m
+        self.x = [rs.uniform(-1.0, 1.0) for _ in range(n)]
         self.masks = [rs.randrange(256) for _ in range(NB_EBANDS)]
-        self.loge = [rs.uniform(-20.0, 20.0) for _ in range(2 * NB_EBANDS)]
-        self.prev1 = [rs.uniform(-20.0, 20.0) for _ in range(2 * NB_EBANDS)]
-        self.prev2 = [rs.uniform(-20.0, 20.0) for _ in range(2 * NB_EBANDS)]
-        self.pulses = [rs.randrange(200) for _ in range(NB_EBANDS)]
-        self.seed = rs.randrange(1 << 32)
+        self.loge = [rs.uniform(-30.0, 30.0) for _ in range(2 * NB_EBANDS)]
+        self.prev1 = [rs.uniform(-30.0, 30.0) for _ in range(2 * NB_EBANDS)]
+        self.prev2 = [rs.uniform(-30.0, 30.0) for _ in range(2 * NB_EBANDS)]
+        self.pulses = [rs.randrange(160) for _ in range(NB_EBANDS)]
+        self.seed = rs.randrange(2 ** 32)
+        if cfg:
+            cfg(self, rs)
+        self.diag = {}
 
     def run(self):
         ref_x = list(self.x)
@@ -85,7 +75,7 @@ class AntiCase:
 
 
 class FlagCase:
-    """反塌缩标志位 raw bit 解码用例。"""
+    """反塌缩标志位解码用例（raw bit + 解码器状态对拍）。"""
 
     def __init__(self, name, label, data, rsv):
         self.name = name
@@ -103,81 +93,103 @@ class FlagCase:
 
 
 def build_cases():
+    """结构性键定向配置；状态键靠随机分布 + 缺啥补啥的搜索。"""
     cases = []
     diag = {}
     seq = 0
 
-    def add(label, lm, start, end, seed, tweak=None):
+    def merge(d, src):
+        for k, v in src.items():
+            d[k] = d.get(k, 0) + v
+
+    def add(label, lm, start, end, seed, cfg=None):
         nonlocal seq
-        c = AntiCase("ac%d" % seq, label, lm, start, end)
-        c.fill_random(seed)
-        if tweak:
-            tweak(c)
+        c = AntiCase("ac%d" % seq, label, lm, start, end, seed, cfg)
         c.run()
-        for k, v in c.diag.items():
-            diag[k] = diag.get(k, 0) + v
+        merge(diag, c.diag)
         cases.append(c)
         seq += 1
+        return c
 
-    def raise_prev(c):
+    def cfg_full_fill(c, rs):
+        # 全带塌缩：位图全 0 → 每带整段注入并 renorm
         for i in range(NB_EBANDS):
-            c.prev1[NB_EBANDS + i] = 50.0
+            c.masks[i] = 0x00
 
-    def clamp_ediff(c):
+    def cfg_no_fill(c, rs):
+        # 全带不塌缩：位图全 1 → 输出恒等（renorm 一次都不触发）
         for i in range(NB_EBANDS):
-            c.loge[i] = -30.0
+            c.masks[i] = 0xFF
+
+    def cfg_thresh_cap(c, rs):
+        # loge == prev → Ediff = 0 → r = 2 > thresh，必然封顶
+        for i in range(2 * NB_EBANDS):
+            c.loge[i] = 10.0
             c.prev1[i] = 10.0
             c.prev2[i] = 10.0
 
-    def zero_pulses(c):
+    def cfg_clamp(c, rs):
+        # loge ≪ prev → Ediff 为负走下限 0
+        for i in range(2 * NB_EBANDS):
+            c.loge[i] = -50.0
+            c.prev1[i] = 5.0
+            c.prev2[i] = 5.0
+
+    def cfg_quirk(c, rs):
+        # 声道 1 槽位（第二半）抬高 prev → C==1 的 max 分支生效
+        for i in range(NB_EBANDS):
+            c.prev1[NB_EBANDS + i] = 50.0
+            c.prev2[NB_EBANDS + i] = 40.0
+
+    def cfg_depth0(c, rs):
+        # pulses=0 且 lm≥1 → depth = (1+0)>>lm = 0
         for i in range(NB_EBANDS):
             c.pulses[i] = 0
 
-    def mask_extremes(c):
-        c.masks[0] = 0x3
-        c.masks[1] = 0x0
+    def cfg_mixed(c, rs):
+        for i in range(0, NB_EBANDS, 3):
+            c.masks[i] = 0x00
+        for i in range(1, NB_EBANDS, 3):
+            c.masks[i] = 0xFF
 
-    # 结构性键定向构造，状态性键由随机分布天然覆盖
-    add("2.5ms 全带随机", 0, 0, NB_EBANDS, 9400)
-    add("声道1槽位抬高 prev（C==1 max 分支）", 1, 0, NB_EBANDS, 9401,
-        raise_prev)
-    add("Ediff 为负走下限 0", 0, 0, NB_EBANDS, 9402, clamp_ediff)
-    add("LM=3 的 sqrt2 因子", 3, 0, NB_EBANDS, 9403)
-    add("depth=0（pulses 全 0）", 0, 0, NB_EBANDS, 9404, zero_pulses)
-    add("满掩码与零掩码各一带", 1, 0, NB_EBANDS, 9405, mask_extremes)
-    add("窄窗 start=5 end=12", 2, 5, 12, 9406)
+    add("lm=0 随机全带", 0, 0, NB_EBANDS, 1000)
+    add("lm=3 随机全带", 3, 0, NB_EBANDS, 1001)
+    add("lm=1 全带塌缩（Ediff=0 封顶）", 1, 0, NB_EBANDS, 1002,
+        cfg_full_fill)
+    add("lm=2 全带不塌缩（输出恒等）", 2, 0, NB_EBANDS, 1003, cfg_no_fill)
+    add("lm=1 Ediff 下限与 thresh 封顶", 1, 0, NB_EBANDS, 1004,
+        lambda c, rs: (cfg_thresh_cap(c, rs), cfg_clamp(c, rs)))
+    add("lm=1 声道1槽位抬高 prev", 1, 5, 17, 1005, cfg_quirk)
+    add("lm=1 depth=0 与混合位图", 1, 0, NB_EBANDS, 1006,
+        lambda c, rs: (cfg_depth0(c, rs), cfg_mixed(c, rs)))
 
+    # 缺啥补啥：随机改位图/能量再跑
     need = [k for k in NEED if k not in diag]
-    rs = random.Random(20261010)
-    tries = 0
-    while need and tries < 40000:
-        tries += 1
-        lm = rs.choice([0, 1, 2, 3])
-        start = rs.choice([0, 0, 3, 5])
-        end = rs.choice([21, 21, 17, 12])
-        if start >= end:
-            continue
-        c = AntiCase("acx%d" % tries, f"覆盖搜索 {tries}", lm, start, end)
-        c.fill_random(9500 + tries)
+    seed = 1100
+    while need and seed < 60000:
+        c = AntiCase("ag%d" % seed, f"覆盖搜索 {seed}",
+                     seed % 4, 0, NB_EBANDS, seed)
         c.run()
         new = [k for k in c.diag if k in need]
         if new:
-            for k, v in c.diag.items():
-                diag[k] = diag.get(k, 0) + v
+            merge(diag, c.diag)
             c.name = "ac%d" % seq
             cases.append(c)
             seq += 1
             need = [k for k in NEED if k not in diag]
-    if need:
-        raise SystemExit(f"anti-collapse coverage incomplete: {need}")
+        seed += 1
+    if missing := [k for k in NEED if k not in diag]:
+        raise SystemExit(f"anti-collapse coverage incomplete: {missing}")
     return cases, diag
 
 
 def build_flag_cases():
+    specs = [
+        ("acflag0", "标志位=0 的载荷", 64, 2000, 8),
+        ("acflag1", "标志位=1 的载荷", 64, 2001, 8),
+        ("acflag2", "无预留（不读位）", 64, 2002, 0),
+    ]
     cases = []
-    specs = [("acflag0", "标志位=0 的载荷", 64, 9600, 8),
-             ("acflag1", "标志位=1 的载荷", 64, 9601, 8),
-             ("acflag2", "无预留不读位", 64, 9602, 0)]
     for name, label, nbytes, seed, rsv in specs:
         c = FlagCase(name, label, rand_bytes(nbytes, seed), rsv)
         c.run()
@@ -185,47 +197,41 @@ def build_flag_cases():
     return cases
 
 
-def fmt_arr_int(vals):
-    return "[" + ", ".join(str(int(v)) for v in vals) + "]"
-
-
-def fmt_arr_f(vals):
-    return "[" + ", ".join(fmt_f(v) for v in vals) + "]"
-
-
-def emit_anti_case(c):
-    out = ["", "///|", f"fn play_{c.name}() -> Unit raise {{"]
-    out.append("  let x : Array[Double] = " + fmt_arr_f(c.x))
-    out.append("  let masks : Array[Int] = " + fmt_arr_int(c.masks))
-    out.append("  let loge : Array[Double] = " + fmt_arr_f(c.loge))
-    out.append("  let prev1 : Array[Double] = " + fmt_arr_f(c.prev1))
-    out.append("  let prev2 : Array[Double] = " + fmt_arr_f(c.prev2))
-    out.append("  let pulses : Array[Int] = " + fmt_arr_int(c.pulses))
-    out.append(f"  let seed = {c.seed}L")
+def emit_anti_case(case):
+    out = ["", "///|",
+           f"fn play_split_ac_{case.name}() -> Unit raise {{"]
+    out.append("  // 输入与期望值由 tools/gen_anti_collapse_goldens.py 的")
+    out.append("  // 独立参考端算出，重放同一输入后按相对容差比对整段频谱。")
+    out.append(f"  let x : Array[Double] = {fmt_f(case.x)}")
+    out.append(f"  let masks : Array[Int] = {fmt_arr(case.masks)}")
+    out.append(f"  let loge : Array[Double] = {fmt_f(case.loge)}")
+    out.append(f"  let prev1 : Array[Double] = {fmt_f(case.prev1)}")
+    out.append(f"  let prev2 : Array[Double] = {fmt_f(case.prev2)}")
+    out.append(f"  let pulses : Array[Int] = {fmt_arr(case.pulses)}")
+    out.append(f"  let want : Array[Double] = {fmt_f(case.want)}")
     out.append(
-        f"  celt_anti_collapse(x, masks, {c.lm}, {c.start}, {c.end}, "
-        "loge, prev1, prev2, pulses, seed)")
+        f"  celt_anti_collapse(x, masks, {case.lm}, {case.start}, "
+        f"{case.end}, loge, prev1, prev2, pulses, {case.seed}L)")
     out.append(
-        f'  expect_dn_close(x, {c.name}_want, "ac {c.label}", '
-        "0.000000000001)")
+        f'  expect_dn_close(x, want, "{case.name}", 0.000000000001)')
     out.append("}")
     out.append("")
     return "\n".join(out)
 
 
-def emit_flag_case(c):
-    rng, val, tell, tf = c.state
+def emit_flag_case(case):
+    rng, val, tell, tf = case.state
     out = ["", "///|",
-           f"fn play_{c.name}(dec : RangeDecoder) -> Unit raise {{"]
-    out.append(f"  // 载荷见 ANTI_{c.name.upper()}_BITS；期望值由")
-    out.append("  // tools/gen_anti_collapse_goldens.py 的参考端算出。")
-    out.append(f"  let got = celt_decode_anti_collapse_flag(dec, {c.rsv})")
-    out.append(f'  if got != {c.want} {{')
-    out.append(
-        f'    @test.fail("{c.name}: flag \\{{got}} != {c.want}")')
+           f"fn play_{case.name}(dec : RangeDecoder) -> Unit raise {{"]
+    out.append(f"  // 载荷见 ANTI_{case.name.upper()}_BITS；期望值由")
+    out.append("  // tools/gen_anti_collapse_goldens.py 的独立参考端算出。")
+    out.append(f"  let got = celt_decode_anti_collapse_flag(dec, {case.rsv})")
+    out.append(f'  if got != {case.want} {{')
+    out.append(f'    @test.fail("{case.name}: flag got \\{{got}} != {case.want}")')
     out.append("  }")
     out.append(
-        f'  expect_dec_state(dec, "{c.name}", {rng}L, {val}L, {tell}, {tf})')
+        f'  expect_dec_state(dec, "{case.name}", {rng}L, {val}L, '
+        f"{tell}, {tf})")
     out.append("}")
     out.append("")
     return "\n".join(out)
@@ -234,63 +240,91 @@ def emit_flag_case(c):
 def main():
     cases, diag = build_cases()
     flags = build_flag_cases()
-    lcg_seq = []
-    s = 42
-    for _ in range(10):
-        s = lcg_rand(s)
-        lcg_seq.append(s)
     lines = ["\n".join([
         "// 由 tools/gen_anti_collapse_goldens.py 生成，请勿手改。",
         "//",
-        "// 反塌缩（RFC 6716 §4.3.5）金标：期望频谱由本脚本内的独立",
-        "// Python 参考端算出（浮点路径：depth/thresh、Ediff 下限、",
-        "// C==1 的 prev max 分支、lcg 符号流与注入后归一化），MoonBit",
-        "// 端对同一输入重放后按相对容差逐项比对。",
+        "// 反塌缩（RFC 6716 §4.3.5）金标：输入频谱、位图、能量与期望输出",
+        "// 全部由本脚本内的独立 Python 参考端算出（浮点路径逐行对应",
+        "// celt_bands.c 的 anti_collapse 与 celt_vq.c 的 renormalise_vector），",
+        "// MoonBit 端重放同一输入后按相对容差比对整段频谱；标志位用例另带",
+        "// 范围解码器状态对拍。",
         "",
         "///|",
         "",
     ])]
-    for c in cases:
+    for case in cases:
+        lines.append(emit_anti_case(case))
         lines.append("\n".join([
             "",
             "///|",
-            f"let {c.name}_want : Array[Double] = " + fmt_arr_f(c.want),
-            "",
-        ]))
-        lines.append(emit_anti_case(c))
-        lines.append("\n".join([
-            "",
-            "///|",
-            f'test "金标：anti-collapse · {c.label}" {{',
-            f"  play_{c.name}()",
+            f'test "金标：anti-collapse · {case.label}" {{',
+            f"  play_split_ac_{case.name}()",
             "}",
             "",
         ]))
-    for c in flags:
-        hexlit = 'b"' + "".join("\\x%02x" % b for b in c.data) + '"'
+    for case in flags:
+        hexlit = 'b"' + "".join("\\x%02x" % b for b in case.data) + '"'
         lines.append("\n".join([
             "",
             "///|",
-            f"const ANTI_{c.name.upper()}_BITS : Bytes = {hexlit}",
+            f"const ANTI_{case.name.upper()}_BITS : Bytes = {hexlit}",
             "",
         ]))
-        lines.append(emit_flag_case(c))
+        lines.append(emit_flag_case(case))
         lines.append("\n".join([
             "",
             "///|",
-            f'test "金标：anti-collapse 位 · {c.label}" {{',
-            f"  let dec = RangeDecoder::new(ANTI_{c.name.upper()}_BITS)",
-            f"  play_{c.name}(dec)",
+            f'test "金标：anti-collapse 标志位 · {case.label}" {{',
+            f"  let dec = RangeDecoder::new(ANTI_{case.name.upper()}_BITS)",
+            f"  play_{case.name}(dec)",
             "}",
             "",
         ]))
+    # lcg 序列：seed=0 起 10 步（首项 1013904223 即 C 常量加数）
+    seq = []
+    s = 0
+    for _ in range(10):
+        s = lcg_rand(s)
+        seq.append(s)
     lines.append("\n".join([
         "",
         "///|",
-        "/// celt_lcg_rand 的 10 步推进（seed=42 起，uint32 环绕）。",
+        "/// celt_lcg_rand 从 0 起的 10 步序列（首项即 LCG 常量 1013904223）。",
         "let ac_lcg_seq : Array[Int64] = [",
-        "  " + ", ".join(f"{v}L" for v in lcg_seq),
+        "  " + ", ".join(f"{v}L" for v in seq),
         "]",
+        "",
+    ]))
+    # 预留位公式的双向网格：[is_transient, lm, bits, want] 平铺
+    rsv_rows = []
+    for transient in (False, True):
+        for lm in (0, 1, 2, 3):
+            for bits in (0, 4, 31, 32, 33, 39, 40, 41, 100):
+                rsv_rows += [int(transient), lm, bits,
+                             anti_collapse_rsv(transient, lm, bits)]
+    lines.append("\n".join([
+        "",
+        "///|",
+        "/// 预留位公式的网格金标：每 4 项一组 [瞬态, lm, 预算, 期望]。",
+        "let ac_rsv_grid : Array[Int] = [",
+        "  " + ", ".join(str(v) for v in rsv_rows),
+        "]",
+        "",
+        "///|",
+        "test \"金标：anti-collapse 预留位公式\" {",
+        "  for i in 0..<(ac_rsv_grid.length() / 4) {",
+        "    let base = i * 4",
+        "    let got = celt_anti_collapse_rsv(",
+        "      ac_rsv_grid[base] != 0, ac_rsv_grid[base + 1],",
+        "      ac_rsv_grid[base + 2],",
+        "    )",
+        "    if got != ac_rsv_grid[base + 3] {",
+        "      @test.fail(",
+        "        \"rsv 网格行 \\{i} 期望 \\{ac_rsv_grid[base + 3]} 实得 \\{got}\",",
+        "      )",
+        "    }",
+        "  }",
+        "}",
         "",
     ]))
     out = os.path.join(

@@ -87,6 +87,9 @@ pub fn celt_anti_collapse(
       prev2 = prev2_log_e[nb + i]
     }
     let mut ediff = band_log_e[i] - (if prev1 < prev2 { prev1 } else { prev2 })
+    // 下限 0 照搬参考实现（其定点路径用它防 exp2 上溢）。浮点路径里这
+    // 一步不可观测：ediff≤0 时 r≥2 而 thresh≤0.5，随后 min 恒取 thresh，
+    // 截不截断结果相同——故变异验证不覆盖此行（等效变异）。
     if ediff < 0.0 {
       ediff = 0.0
     }

@@ -16,7 +16,7 @@ test "lcg 常量锚点与 10 步序列" {
   // 高位进位必须按 32 位回绕：seed=0xFFFFFFFF 的下一步
   // （Python 端独立算出 (1664525×(2^32−1)+1013904223) mod 2^32）
   @test.assert_eq(celt_lcg_rand(4294967295L), 1012239698L)
-  let mut s = 42L
+  let mut s = 0L
   for i in 0..<ac_lcg_seq.length() {
     s = celt_lcg_rand(s)
     if s != ac_lcg_seq[i] {
