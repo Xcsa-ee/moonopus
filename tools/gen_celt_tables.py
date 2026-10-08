@@ -263,6 +263,11 @@ def main():
     beta_intra = extract_scalar(qb, "beta_intra")
     small_icdf = extract_array(qb, "small_energy_icdf")
     caps = extract_array(smf, "cache_caps50")
+    # 脉冲缓存（§4.3.4.4 的 bits2pulses/pulses2bits 查表数据）：dump_modes
+    # 对标准 48 kHz 模式生成的静态产物，同文件里两份同名定义由头文件卫队
+    # 去重，extract_array 取的第一份即生效的那份。
+    pulse_index = extract_array(smf, "cache_index50")
+    pulse_bits = extract_array(smf, "cache_bits50")
 
     # §4.3.2 的每带平均能量：编码端 amp2Log2 从对数能量里减掉它，
     # denormalise_bands 再加回来，所以它是能量解码与反归一化的衔接点。
@@ -283,6 +288,20 @@ def main():
     assert len(caps) == 168, f"cache_caps50 {len(caps)} != 168"
     assert all(0 <= v <= 255 for v in e_prob), "e_prob_model out of range"
     assert all(0 <= v <= 255 for v in caps), "cache_caps50 out of range"
+    # 脉冲缓存的形状：index 是 (LM+1 行+1 附加行) × 21 带 = 5×21，bits 是
+    # 去重后的唯一条目拼接。cache[0] 槽存该条目的 Kmax（≤ MAX_PSEUDO=40），
+    # 其后每槽存「位数(get_pulses(j)) − 1」，单位 1/8 bit，fits_in32 保证
+    # 位数 < 32 bit 即值 ≤ 255，正落在 unsigned char 的值域内。
+    assert len(pulse_index) == 5 * 21, f"cache_index50 {len(pulse_index)} != 105"
+    assert len(pulse_bits) == 392, f"cache_bits50 {len(pulse_bits)} != 392"
+    assert pulse_index[:8] == [-1] * 8, (
+        "cache_index50 首 8 项应为 -1（N=0 的条目）: "
+        f"{pulse_index[:8]}")
+    assert all(-1 <= v < len(pulse_bits) for v in pulse_index), (
+        "cache_index50 越界项")
+    assert all(0 <= v <= 255 for v in pulse_bits), "cache_bits50 out of range"
+    assert all(pulse_bits[v] <= 40 for v in pulse_index if v >= 0), (
+        "cache_bits50 的 Kmax 槽位越界（应 ≤ MAX_PSEUDO=40）")
     # 预测系数是 Q15 小数（float 构建）
     assert all(0.0 < v < 1.0 for v in pred), f"pred_coef {pred}"
     assert all(0.0 < v < 1.0 for v in beta), f"beta_coef {beta}"
@@ -442,6 +461,16 @@ def main():
     emit_flat(
         "cel_cache_caps50", caps, "byte",
         "比特分配 caps 表 [168]（§4.3.3 指定直接使用的表数据）。",
+    )
+    emit_flat(
+        "cel_cache_index50", pulse_index, "int",
+        "脉冲缓存条目索引 [5×21]（§4.3.4.4）：行 = LM+1、列 = 带号，值为"
+        " cel_cache_bits50 中的条目起点，−1 表示该 (行, 带) 的 N=0 无效。",
+    )
+    emit_flat(
+        "cel_cache_bits50", pulse_bits, "byte",
+        "脉冲缓存位数表 [392]（§4.3.4.4，单位 1/8 bit）：每条目首槽是"
+        " Kmax（≤40），其后 j=1..Kmax 槽存 位数(get_pulses(j))−1。",
     )
     emit_flat(
         "cel_alloc_vectors", alloc_vectors, "int",
