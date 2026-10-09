@@ -17,8 +17,8 @@
 //   - 静音置位（old_e = -28）按参考实现保留：帧首静音位在本流程可达
 //     （首符号 tell==1，p≈2^-15，金标有定向用例），静音帧的后续符号
 //     由各部件自身的 tell 门控自然跳过；
-//   - 时域段（IMDCT、post-filter、de-emphasis）不在此文件，接在本流程
-//     的 freq 输出之后。
+//   - 时域段（IMDCT、post-filter、de-emphasis）在 celt_synthesis.mbt，
+//     由 celt_decode_frame_audio 接在本流程的 freq 输出之后。
 //
 // 帧间状态（对应 CELT 解码器 struct 的跨帧字段）：
 //   - old_e：42 = 2*nbEBands。[0..21) 当前帧能量；[21..42) 上一帧
