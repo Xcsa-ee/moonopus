@@ -17,7 +17,7 @@ fn play_fh0(dec : RangeDecoder) -> Unit raise {
   // tools/gen_frame_header_goldens.py 的独立参考端算出。
   let got = celt_decode_frame_header(dec, 2, 0, 0)
   expect_frame_header(got, false, false, 0, 0.0, 0, false, false, "fh0")
-  expect_dec_state(dec, "fh0", 1878990848L, 636694252L, 2, 10)
+  expect_dec_state(dec, "fh0", 1878990848L, 368201452L, 2, 10)
 }
 
 ///|
@@ -35,7 +35,7 @@ fn play_fh1(dec : RangeDecoder) -> Unit raise {
   // tools/gen_frame_header_goldens.py 的独立参考端算出。
   let got = celt_decode_frame_header(dec, 2, 0, 3)
   expect_frame_header(got, false, false, 0, 0.0, 0, false, false, "fh1")
-  expect_dec_state(dec, "fh1", 1644116992L, 860623629L, 2, 12)
+  expect_dec_state(dec, "fh1", 1644116992L, 357256973L, 2, 12)
 }
 
 ///|
@@ -52,8 +52,8 @@ fn play_fh2(dec : RangeDecoder) -> Unit raise {
   // 载荷见 FRAME_HEADER_FH2_BITS；期望值由
   // tools/gen_frame_header_goldens.py 的独立参考端算出。
   let got = celt_decode_frame_header(dec, 4, 0, 0)
-  expect_frame_header(got, false, false, 0, 0.0, 0, false, false, "fh2")
-  expect_dec_state(dec, "fh2", 939495424L, 1192886622L, 3, 18)
+  expect_frame_header(got, false, false, 0, 0.0, 0, false, true, "fh2")
+  expect_dec_state(dec, "fh2", 134213632L, 119112030L, 6, 41)
 }
 
 ///|
@@ -70,8 +70,8 @@ fn play_fh3(dec : RangeDecoder) -> Unit raise {
   // 载荷见 FRAME_HEADER_FH3_BITS；期望值由
   // tools/gen_frame_header_goldens.py 的独立参考端算出。
   let got = celt_decode_frame_header(dec, 4, 0, 3)
-  expect_frame_header(got, false, false, 0, 0.0, 0, false, false, "fh3")
-  expect_dec_state(dec, "fh3", 822058496L, 1124309053L, 3, 20)
+  expect_frame_header(got, false, false, 0, 0.0, 0, true, false, "fh3")
+  expect_dec_state(dec, "fh3", 117436928L, 33757757L, 6, 42)
 }
 
 ///|
@@ -89,7 +89,7 @@ fn play_fh4(dec : RangeDecoder) -> Unit raise {
   // tools/gen_frame_header_goldens.py 的独立参考端算出。
   let got = celt_decode_frame_header(dec, 8, 0, 0)
   expect_frame_header(got, false, true, 845, 0.46875, 0, false, false, "fh4")
-  expect_dec_state(dec, "fh4", 78291286L, 131157742L, 18, 143)
+  expect_dec_state(dec, "fh4", 78291286L, 30431983L, 18, 143)
 }
 
 ///|
@@ -107,7 +107,7 @@ fn play_fh5(dec : RangeDecoder) -> Unit raise {
   // tools/gen_frame_header_goldens.py 的独立参考端算出。
   let got = celt_decode_frame_header(dec, 8, 0, 3)
   expect_frame_header(got, false, false, 0, 0.0, 0, false, false, "fh5")
-  expect_dec_state(dec, "fh5", 822058496L, 1553997396L, 3, 20)
+  expect_dec_state(dec, "fh5", 822058496L, 228572244L, 3, 20)
 }
 
 ///|
@@ -125,7 +125,7 @@ fn play_fh6(dec : RangeDecoder) -> Unit raise {
   // tools/gen_frame_header_goldens.py 的独立参考端算出。
   let got = celt_decode_frame_header(dec, 32, 0, 0)
   expect_frame_header(got, false, false, 0, 0.0, 0, false, false, "fh6")
-  expect_dec_state(dec, "fh6", 939495424L, 1921324294L, 3, 18)
+  expect_dec_state(dec, "fh6", 939495424L, 713336070L, 3, 18)
 }
 
 ///|
@@ -143,7 +143,7 @@ fn play_fh7(dec : RangeDecoder) -> Unit raise {
   // tools/gen_frame_header_goldens.py 的独立参考端算出。
   let got = celt_decode_frame_header(dec, 32, 0, 3)
   expect_frame_header(got, false, true, 437, 0.1875, 1, false, false, "fh7")
-  expect_dec_state(dec, "fh7", 34252438L, 34938476L, 18, 144)
+  expect_dec_state(dec, "fh7", 34252438L, 24387501L, 18, 144)
 }
 
 ///|
@@ -161,7 +161,7 @@ fn play_fh8(dec : RangeDecoder) -> Unit raise {
   // tools/gen_frame_header_goldens.py 的独立参考端算出。
   let got = celt_decode_frame_header(dec, 128, 0, 0)
   expect_frame_header(got, false, false, 0, 0.0, 0, false, false, "fh8")
-  expect_dec_state(dec, "fh8", 939495424L, 1524620943L, 3, 18)
+  expect_dec_state(dec, "fh8", 939495424L, 316632719L, 3, 18)
 }
 
 ///|
@@ -178,8 +178,8 @@ fn play_fh9(dec : RangeDecoder) -> Unit raise {
   // 载荷见 FRAME_HEADER_FH9_BITS；期望值由
   // tools/gen_frame_header_goldens.py 的独立参考端算出。
   let got = celt_decode_frame_header(dec, 128, 0, 3)
-  expect_frame_header(got, false, false, 0, 0.0, 0, false, false, "fh9")
-  expect_dec_state(dec, "fh9", 822058496L, 1148908205L, 3, 20)
+  expect_frame_header(got, false, false, 0, 0.0, 0, true, false, "fh9")
+  expect_dec_state(dec, "fh9", 117436928L, 58356909L, 6, 42)
 }
 
 ///|
@@ -197,7 +197,7 @@ fn play_fh10(dec : RangeDecoder) -> Unit raise {
   // tools/gen_frame_header_goldens.py 的独立参考端算出。
   let got = celt_decode_frame_header(dec, 64, 5, 3)
   expect_frame_header(got, false, false, 0, 0.0, 0, true, false, "fh10")
-  expect_dec_state(dec, "fh10", 234873856L, 261238295L, 5, 34)
+  expect_dec_state(dec, "fh10", 234873856L, 227619351L, 5, 34)
 }
 
 ///|
@@ -215,7 +215,7 @@ fn play_fh11(dec : RangeDecoder) -> Unit raise {
   // tools/gen_frame_header_goldens.py 的独立参考端算出。
   let got = celt_decode_frame_header(dec, 4, 5, 1)
   expect_frame_header(got, false, false, 0, 0.0, 0, false, false, "fh11")
-  expect_dec_state(dec, "fh11", 1644116992L, 693786115L, 2, 12)
+  expect_dec_state(dec, "fh11", 1644116992L, 190419459L, 2, 12)
 }
 
 ///|
@@ -251,7 +251,7 @@ fn play_fh13(dec : RangeDecoder) -> Unit raise {
   // tools/gen_frame_header_goldens.py 的独立参考端算出。
   let got = celt_decode_frame_header(dec, 2, 0, 0)
   expect_frame_header(got, false, false, 0, 0.0, 0, false, true, "fh13")
-  expect_dec_state(dec, "fh13", 268427264L, 59015992L, 5, 33)
+  expect_dec_state(dec, "fh13", 268427264L, 58950456L, 5, 33)
 }
 
 ///|

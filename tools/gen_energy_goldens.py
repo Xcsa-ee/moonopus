@@ -145,6 +145,27 @@ def build_cases():
         merge(diag, c.diag)
         cases.append(c)
 
+    # G0. 手写测试（celt_energy_wbtest.mbt）点名引用的 play_* 名字依赖
+    #     这些种子——无条件先成案保证名字稳定（值由参考端自洽计算）；
+    #     分支覆盖仍由下面的搜索负责。
+    names = {c.name for c in cases}
+    for seed in (100, 102, 103, 104):
+        nm = "coarse_short_%d" % seed
+        if nm not in names:
+            c = Case(nm, rand_bytes(1 + (seed % 6), seed))
+            c.coarse(0, NB_EBANDS, False, 3)
+            merge(diag, c.diag)
+            cases.append(c)
+            names.add(nm)
+    for seed in (512, 533, 645):
+        nm = "laplace_tail_%d" % seed
+        if nm not in names:
+            c = Case(nm, rand_bytes(64, seed))
+            c.laplace(pairs, 60)
+            merge(diag, c.diag)
+            cases.append(c)
+            names.add(nm)
+
     # G. 降级分支：短载荷天然触发 icdf / bit_logp / 无比特三条路径。
     #    bit 分支要求 budget-tell 恰好等于 1，命中率低，多搜几例。
     want = {"c_laplace", "c_icdf", "c_bit", "c_none"}
@@ -159,8 +180,10 @@ def build_cases():
         if new or hit_bit:
             seen |= new
             bit_hits += 1 if hit_bit else 0
-            cases.append(c)
-            merge(diag, c.diag)
+            if c.name not in names:
+                cases.append(c)
+                names.add(c.name)
+                merge(diag, c.diag)
         if want <= seen and bit_hits >= 3:
             break
         seed += 1
@@ -222,8 +245,9 @@ def build_cases():
     while seed < 80000:
         c = Case("laplace_tail_%d" % seed, rand_bytes(64, seed))
         c.laplace(pairs, 60)
-        if "lap_tail" in c.diag:
+        if "lap_tail" in c.diag and c.name not in names:
             cases.append(c)
+            names.add(c.name)
             merge(diag, c.diag)
             tail_hits += 1
             if tail_hits >= 3:
@@ -306,6 +330,15 @@ def main():
             "",
         ]))
         lines.append(emit_case(case))
+        lines.append(nl.join([
+            "",
+            "///|",
+            f'test "能量金标：{case.name}" {{',
+            f"  let dec = RangeDecoder::new(ENER_{case.name.upper()}_BITS)",
+            f"  play_{case.name}(dec)",
+            "}",
+            "",
+        ]))
     out = os.path.join(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
         "energy_goldens_wbtest.mbt",

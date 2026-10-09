@@ -24,7 +24,7 @@ fn play_tf0(dec : RangeDecoder) -> Unit raise {
     0,
     "tf0",
   )
-  expect_dec_state(dec, "tf0", 233390689L, 1981625467L, 5, 34)
+  expect_dec_state(dec, "tf0", 233390689L, 67532508L, 5, 34)
 }
 
 ///|
@@ -45,11 +45,11 @@ fn play_tf1(dec : RangeDecoder) -> Unit raise {
   expect_tf(
     got_tf,
     got_spread,
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    0,
+    [0, 0, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0],
+    2,
     "tf1",
   )
-  expect_dec_state(dec, "tf1", 96909145L, 1153566051L, 6, 44)
+  expect_dec_state(dec, "tf1", 330783075L, 131952594L, 12, 94)
 }
 
 ///|
@@ -70,11 +70,11 @@ fn play_tf2(dec : RangeDecoder) -> Unit raise {
   expect_tf(
     got_tf,
     got_spread,
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    2,
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0],
+    1,
     "tf2",
   )
-  expect_dec_state(dec, "tf2", 700172046L, 621786897L, 3, 21)
+  expect_dec_state(dec, "tf2", 8881814L, 7482992L, 17, 136)
 }
 
 ///|
@@ -95,11 +95,11 @@ fn play_tf3(dec : RangeDecoder) -> Unit raise {
   expect_tf(
     got_tf,
     got_spread,
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    0,
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+    2,
     "tf3",
   )
-  expect_dec_state(dec, "tf3", 96909145L, 1638319692L, 6, 44)
+  expect_dec_state(dec, "tf3", 9690912L, 8730774L, 9, 71)
 }
 
 ///|
@@ -124,7 +124,7 @@ fn play_tf4(dec : RangeDecoder) -> Unit raise {
     0,
     "tf4",
   )
-  expect_dec_state(dec, "tf4", 233390689L, 1967424499L, 5, 34)
+  expect_dec_state(dec, "tf4", 233390689L, 53331540L, 5, 34)
 }
 
 ///|
@@ -145,11 +145,11 @@ fn play_tf5(dec : RangeDecoder) -> Unit raise {
   expect_tf(
     got_tf,
     got_spread,
-    [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-    0,
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+    2,
     "tf5",
   )
-  expect_dec_state(dec, "tf5", 48454573L, 1327263879L, 7, 52)
+  expect_dec_state(dec, "tf5", 9690912L, 300305L, 9, 71)
 }
 
 ///|
@@ -170,11 +170,11 @@ fn play_tf6(dec : RangeDecoder) -> Unit raise {
   expect_tf(
     got_tf,
     got_spread,
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    0,
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1],
+    2,
     "tf6",
   )
-  expect_dec_state(dec, "tf6", 233390689L, 1068461000L, 5, 34)
+  expect_dec_state(dec, "tf6", 22586193L, 20172184L, 8, 61)
 }
 
 ///|
@@ -195,11 +195,14 @@ fn play_tf7(dec : RangeDecoder) -> Unit raise {
   expect_tf(
     got_tf,
     got_spread,
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    0,
+    [
+      0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0,
+      0,
+    ],
+    2,
     "tf7",
   )
-  expect_dec_state(dec, "tf7", 96909145L, 785914340L, 6, 44)
+  expect_dec_state(dec, "tf7", 330783075L, 251892482L, 12, 94)
 }
 
 ///|
@@ -220,11 +223,14 @@ fn play_tf8(dec : RangeDecoder) -> Unit raise {
   expect_tf(
     got_tf,
     got_spread,
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [
+      0, 0, 0, 0, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
+      -2,
+    ],
     2,
     "tf8",
   )
-  expect_dec_state(dec, "tf8", 700172046L, 283862306L, 3, 21)
+  expect_dec_state(dec, "tf8", 11293086L, 9563563L, 9, 69)
 }
 
 ///|
@@ -245,11 +251,11 @@ fn play_tf9(dec : RangeDecoder) -> Unit raise {
   expect_tf(
     got_tf,
     got_spread,
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    0,
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+    1,
     "tf9",
   )
-  expect_dec_state(dec, "tf9", 96909145L, 1640046899L, 6, 44)
+  expect_dec_state(dec, "tf9", 236273664L, 196369886L, 13, 98)
 }
 
 ///|
@@ -270,11 +276,14 @@ fn play_tf10(dec : RangeDecoder) -> Unit raise {
   expect_tf(
     got_tf,
     got_spread,
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [
+      0, 0, 0, 0, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3,
+      0,
+    ],
     2,
     "tf10",
   )
-  expect_dec_state(dec, "tf10", 700172046L, 272293481L, 3, 21)
+  expect_dec_state(dec, "tf10", 93259068L, 37325476L, 14, 109)
 }
 
 ///|
@@ -295,11 +304,11 @@ fn play_tf11(dec : RangeDecoder) -> Unit raise {
   expect_tf(
     got_tf,
     got_spread,
-    [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+    [1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 1],
     0,
     "tf11",
   )
-  expect_dec_state(dec, "tf11", 48454573L, 861400145L, 7, 52)
+  expect_dec_state(dec, "tf11", 55130547L, 14943887L, 15, 115)
 }
 
 ///|
@@ -321,10 +330,10 @@ fn play_tf12(dec : RangeDecoder) -> Unit raise {
     got_tf,
     got_spread,
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    0,
+    2,
     "tf12",
   )
-  expect_dec_state(dec, "tf12", 233390689L, 1189410933L, 5, 34)
+  expect_dec_state(dec, "tf12", 700172046L, 42173072L, 3, 21)
 }
 
 ///|
@@ -345,11 +354,11 @@ fn play_tf13(dec : RangeDecoder) -> Unit raise {
   expect_tf(
     got_tf,
     got_spread,
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    0,
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1],
+    2,
     "tf13",
   )
-  expect_dec_state(dec, "tf13", 96909145L, 1468557580L, 6, 44)
+  expect_dec_state(dec, "tf13", 19381824L, 1275006L, 8, 63)
 }
 
 ///|
@@ -371,10 +380,10 @@ fn play_tf14(dec : RangeDecoder) -> Unit raise {
     got_tf,
     got_spread,
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    0,
+    2,
     "tf14",
   )
-  expect_dec_state(dec, "tf14", 233390689L, 1286722833L, 5, 34)
+  expect_dec_state(dec, "tf14", 700172046L, 139484972L, 3, 21)
 }
 
 ///|
@@ -395,11 +404,11 @@ fn play_tf15(dec : RangeDecoder) -> Unit raise {
   expect_tf(
     got_tf,
     got_spread,
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    0,
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+    2,
     "tf15",
   )
-  expect_dec_state(dec, "tf15", 96909145L, 680397834L, 6, 44)
+  expect_dec_state(dec, "tf15", 11026092L, 4240926L, 17, 133)
 }
 
 ///|
@@ -421,10 +430,10 @@ fn play_tf16(dec : RangeDecoder) -> Unit raise {
     got_tf,
     got_spread,
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    0,
+    2,
     "tf16",
   )
-  expect_dec_state(dec, "tf16", 233390689L, 1468350516L, 5, 34)
+  expect_dec_state(dec, "tf16", 700172046L, 321112655L, 3, 21)
 }
 
 ///|
@@ -449,7 +458,7 @@ fn play_tf17(dec : RangeDecoder) -> Unit raise {
     0,
     "tf17",
   )
-  expect_dec_state(dec, "tf17", 16151535L, 531634954L, 9, 65)
+  expect_dec_state(dec, "tf17", 16151535L, 10915577L, 9, 65)
 }
 
 ///|
@@ -471,10 +480,10 @@ fn play_tf18(dec : RangeDecoder) -> Unit raise {
     got_tf,
     got_spread,
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    0,
+    2,
     "tf18",
   )
-  expect_dec_state(dec, "tf18", 310583290L, 1358319950L, 4, 31)
+  expect_dec_state(dec, "tf18", 931749840L, 541907512L, 3, 18)
 }
 
 ///|
@@ -496,10 +505,10 @@ fn play_tf19(dec : RangeDecoder) -> Unit raise {
     got_tf,
     got_spread,
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    0,
+    2,
     "tf19",
   )
-  expect_dec_state(dec, "tf19", 28871676L, 491389552L, 8, 58)
+  expect_dec_state(dec, "tf19", 86615025L, 78254391L, 6, 46)
 }
 
 ///|
@@ -524,10 +533,10 @@ fn play_tf20(dec : RangeDecoder) -> Unit raise {
       -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
       -2, -2,
     ],
-    0,
+    2,
     "tf20",
   )
-  expect_dec_state(dec, "tf20", 1991602688L, 114230796L, 10, 73)
+  expect_dec_state(dec, "tf20", 23339064L, 17010528L, 8, 61)
 }
 
 ///|
@@ -548,11 +557,11 @@ fn play_tf21(dec : RangeDecoder) -> Unit raise {
   expect_tf(
     got_tf,
     got_spread,
-    [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-    0,
+    [1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    2,
     "tf21",
   )
-  expect_dec_state(dec, "tf21", 48454573L, 852480857L, 7, 52)
+  expect_dec_state(dec, "tf21", 165391590L, 143085805L, 13, 102)
 }
 
 ///|
@@ -562,26 +571,26 @@ test "金标：TF 与 spread · 极小帧 2B 短块" {
 }
 
 ///|
-const TF_TU28315_BITS : Bytes = b"\xff\xc7\x29\xb4\x4c\x29\x43\xef\xf1\xea\xc2\x74\x64\x23\xb0\x3a\x0a\x06\xa5\x48\x10\xa1\x4e\xd4\xca\x3e\xfe\x1f\x8f\xba\xe6\x7e\x07\x96\x99\x36\x68\xb1\x36\x0c\x5f\x53\x2b\x6c\x3b\x88\x98\x68\x49\xee\x2e\xd1\x79\x82\x0c\x7f\x2c\xac\xa2\xbb\x43\x23\xba\x3c"
+const TF_TU12047_BITS : Bytes = b"\x9d\xe5\xcd\xdd\xcc\xb5\xac\x4a\x15\x93\x76\xca\x89\x7f\x2b\xcc\x9a\xa6\x62\x8b\x07\x0d\x93\xd4\xc5\xb0\xab\x68\x60\x6a\xe1\xae\x4c\x2f\x6f\x3f\xba\xeb\xd6\x53\xa5\x04\x3b\x48\x7b\xac\xbe\xb4\x39\x6c\xf8\x0c\xb6\x66\x19\x2a\x6d\xea\xe9\xb2\xaa\x1f\x4a\xcd"
 
 ///|
-fn play_tu28315(dec : RangeDecoder) -> Unit raise {
-  // 载荷见 TF_TU28315_BITS；期望值由
+fn play_tu12047(dec : RangeDecoder) -> Unit raise {
+  // 载荷见 TF_TU12047_BITS；期望值由
   // tools/gen_tf_goldens.py 的独立参考端算出。
   let got_tf = celt_decode_tf(dec, 0, 21, true, 3, 2)
   let got_spread = celt_decode_spread(dec, 2)
   expect_tf(
     got_tf,
     got_spread,
-    [0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [3, 3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0],
     2,
-    "tu28315",
+    "tu12047",
   )
-  expect_dec_state(dec, "tu28315", 251658240L, 476784089L, 13, 97)
+  expect_dec_state(dec, "tu12047", 21750425L, 3113373L, 16, 126)
 }
 
 ///|
-test "金标：TF 与 spread · 覆盖搜索 28315" {
-  let dec = RangeDecoder::new(TF_TU28315_BITS)
-  play_tu28315(dec)
+test "金标：TF 与 spread · 覆盖搜索 12047" {
+  let dec = RangeDecoder::new(TF_TU12047_BITS)
+  play_tu12047(dec)
 }

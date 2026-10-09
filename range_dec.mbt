@@ -88,6 +88,9 @@ fn RangeDecoder::decode(self : RangeDecoder, ft : Int) -> Int {
 
 ///|
 /// ec_dec_update()：按 (fl, fh, ft) 推进状态并重归一化（§4.1.2）。
+///
+/// val 的减法 `val -= (rng/ft)*(ft-fh)` 是**无条件**的，只有 rng 按
+/// fl>0 分支（RFC §4.1.2 公式与参考实现 entdec.c 的 ec_dec_update 一致）。
 fn RangeDecoder::update(
   self : RangeDecoder,
   fl : Int,
@@ -95,8 +98,8 @@ fn RangeDecoder::update(
   ft : Int,
 ) -> Unit {
   let s = self.rng / ft.to_int64()
+  self.val = self.val - s * (ft - fh).to_int64()
   if fl > 0 {
-    self.val = self.val - s * (ft - fh).to_int64()
     self.rng = s * (fh - fl).to_int64()
   } else {
     self.rng = self.rng - s * (ft - fh).to_int64()

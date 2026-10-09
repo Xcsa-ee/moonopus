@@ -35,7 +35,16 @@ def fmt_i(vals):
 
 
 def fmt_f(vals):
-    return "[" + ", ".join(moon_num(v) for v in vals) + "]"
+    # 状态数组走精确比较（expect_state 用 !=），必须原值精确回环；
+    # 仅当 moon_num 对 ~1e-19 级相消残差回环失败时才退到 1e-12 取整
+    # （这类值只进谱/频域数组，比对是 1e-9 相对容差，取整无害）。
+    out = []
+    for v in vals:
+        try:
+            out.append(moon_num(v))
+        except ValueError:
+            out.append(moon_num(round(v, 12)))
+    return "[" + ", ".join(out) + "]"
 
 
 def find_header(pred, lm, nbytes, seed0, limit=400000):

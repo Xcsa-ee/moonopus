@@ -82,10 +82,11 @@ class RangeDecoder:
         return ft - min(self.val // d + 1, ft)
 
     def _update(self, fl, fh, ft):
-        # §4.1.2：ec_dec_update()（val 不在此处掩码，掩码在 renormalization）
+        # §4.1.2：ec_dec_update()——val 的减法是**无条件**的，只有 rng 按
+        # fl>0 分支（RFC 原文与 entdec.c 一致；val 的掩码在 renormalization）
         s = self.rng // ft
+        self.val = self.val - s * (ft - fh)
         if fl > 0:
-            self.val = self.val - s * (ft - fh)
             self.rng = s * (fh - fl)
         else:
             self.rng = self.rng - s * (ft - fh)
