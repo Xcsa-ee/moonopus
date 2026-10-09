@@ -1,4 +1,4 @@
-name = "Xcsa-ee/moonopus"
+name = "LL728/moonopus"
 
 version = "0.1.0"
 
