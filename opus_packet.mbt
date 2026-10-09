@@ -35,6 +35,10 @@ pub struct OpusPacket {
   frame_lengths : Array[Int]
   is_vbr : Bool
   padding_bytes : Int
+  /// 原始包字节（frame_data 切片来源）
+  data : Bytes
+  /// 帧数据区起点：越过 TOC、帧长字段与填充头（§3.2）
+  payload_off : Int
 }
 
 ///|
@@ -145,6 +149,7 @@ pub fn parse_opus_packet(data : Bytes) -> Result[OpusPacket, String] {
   let mut frame_count = 0
   let mut is_vbr = false
   let mut padding_bytes = 0
+  let mut payload_off = 0
   if code == 0 {
     // §3.2.2：TOC 之后全部是唯一一帧的数据
     if n - 1 > 1275 {
@@ -152,6 +157,7 @@ pub fn parse_opus_packet(data : Bytes) -> Result[OpusPacket, String] {
     }
     frame_count = 1
     frame_lengths.push(n - 1)
+    payload_off = 1
   } else if code == 1 {
     // §3.2.3：[R3] N 必须为奇数，两帧各 (N-1)/2 字节
     if n % 2 == 0 {
@@ -164,6 +170,7 @@ pub fn parse_opus_packet(data : Bytes) -> Result[OpusPacket, String] {
     frame_count = 2
     frame_lengths.push(half)
     frame_lengths.push(half)
+    payload_off = 1
   } else if code == 2 {
     // §3.2.4：[R4] 需足以解出首帧长，且首帧长不超过剩余字节
     if n < 2 {
@@ -175,6 +182,7 @@ pub fn parse_opus_packet(data : Bytes) -> Result[OpusPacket, String] {
       Ok(v) => v
       Err(e) => return Err("malformed packet [R4]: \{e}")
     }
+    payload_off = 1 + used
     let rest = n - 1 - used
     if n1 > rest {
       return Err(
@@ -274,6 +282,7 @@ pub fn parse_opus_packet(data : Bytes) -> Result[OpusPacket, String] {
       }
     }
     frame_count = m
+    payload_off = pos
   }
   Ok({
     config,
@@ -285,7 +294,28 @@ pub fn parse_opus_packet(data : Bytes) -> Result[OpusPacket, String] {
     frame_lengths,
     is_vbr,
     padding_bytes,
+    data,
+    payload_off,
   })
+}
+
+///|
+/// 第 i 帧的压缩载荷（§3.2 帧数据区，不含 TOC/帧长/填充）。
+/// 越界或负索引返回 None。
+pub fn OpusPacket::frame_data(self : OpusPacket, i : Int) -> Bytes? {
+  if i < 0 || i >= self.frame_count {
+    return None
+  }
+  let mut off = self.payload_off
+  for k in 0..<i {
+    off += self.frame_lengths[k]
+  }
+  let n = self.frame_lengths[i]
+  let buf = @buffer.Buffer()
+  for j in 0..<n {
+    buf.write_byte(self.data.unsafe_get(off + j))
+  }
+  Some(buf.to_bytes())
 }
 
 ///|

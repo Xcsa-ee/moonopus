@@ -10,6 +10,9 @@ pub struct OpusStream {
   head : OpusHead
   tags : OpusTags
   audio : Array[Bytes]
+  /// 最后完成音频包所在页的 granulepos（RFC 7845 §4.3：48 kHz 总样本
+  /// 位置；无音频包完成的页 granule 为 -1，不更新）
+  granule : Int64
 }
 
 ///|
@@ -36,6 +39,7 @@ pub fn open_opus(data : Bytes) -> Result[OpusStream, String] {
   let mut page_index = 0
   let mut serial = 0U
   let mut eos_seen = false
+  let mut last_granule = 0L
   while offset < data.length() {
     if eos_seen {
       return Err("page after end of stream")
@@ -73,6 +77,7 @@ pub fn open_opus(data : Bytes) -> Result[OpusStream, String] {
     }
     let size = page.total_size()
     let done = assembler.push_page(page)
+    let mut pushed_audio = false
     if page_index == 0 && (done.length() != 1 || assembler.has_partial()) {
       return Err("OpusHead must be alone on the first page")
     }
@@ -101,7 +106,11 @@ pub fn open_opus(data : Bytes) -> Result[OpusStream, String] {
         tags_done = true
       } else {
         audio.push(pkt)
+        pushed_audio = true
       }
+    }
+    if pushed_audio && page.granule_position >= 0L {
+      last_granule = page.granule_position
     }
     if (page.header_type & FLAG_EOS) != 0 {
       eos_seen = true
@@ -117,7 +126,7 @@ pub fn open_opus(data : Bytes) -> Result[OpusStream, String] {
     Some(v) => v
     None => return Err("missing OpusTags")
   }
-  Ok({ head: h, tags: t, audio, })
+  Ok({ head: h, tags: t, audio, granule: last_granule, })
 }
 
 ///|
@@ -178,6 +187,13 @@ pub fn OpusStream::vendor(self : OpusStream) -> String {
 /// 用户注释列表（OpusTags comments，UTF-8 解码，无效字节替换为 U+FFFD）。
 pub fn OpusStream::comments(self : OpusStream) -> Array[String] {
   self.tags.comments
+}
+
+///|
+/// 最后完成音频包所在页的 granulepos（RFC 7845 §4.3）：流末的 48 kHz
+/// 总样本位置，与 pre-skip 相减即有效输出长度。无音频页时为 0。
+pub fn OpusStream::granule(self : OpusStream) -> Int64 {
+  self.granule
 }
 
 ///|

@@ -392,6 +392,86 @@ test "code 3 VBR：帧长与 [R5]/[R7]" {
 }
 
 ///|
+/// 取第 i 帧载荷，缺失即测试失败（测试内助手）。
+fn pkt_frame(p : OpusPacket, i : Int) -> Bytes raise {
+  match p.frame_data(i) {
+    Some(b) => b
+    None => @test.fail("frame \{i} 载荷缺失")
+  }
+}
+
+///|
+/// 两段字节逐字节比对（测试内助手）。
+fn pkt_bytes_eq(a : Bytes, b : Bytes, tag : String) -> Unit raise {
+  if a.length() != b.length() {
+    @test.fail("\{tag}: 长度 \{a.length()} != \{b.length()}")
+  }
+  for i in 0..<a.length() {
+    if a.unsafe_get(i) != b.unsafe_get(i) {
+      @test.fail("\{tag}: 字节 \{i} 不等")
+    }
+  }
+}
+
+///|
+/// frame_data：四种打包的帧载荷切片与手工预期逐字节一致，
+/// 且拼接恰为帧数据区（越过 TOC/帧长/填充头）。
+test "frame_data：四种打包的帧载荷切片" {
+  // code 0：TOC 之后全部是一帧
+  match parse_opus_packet(build_packet([0x60, 10, 20, 30])) {
+    Ok(p) => {
+      pkt_bytes_eq(pkt_frame(p, 0), b"\x0a\x14\x1e", "code0 f0")
+      if p.frame_data(1) != None {
+        @test.fail("code0 越界应为 None")
+      }
+    }
+    Err(e) => @test.fail(e)
+  }
+  // code 1：两帧等长，各 (N-1)/2
+  match parse_opus_packet(build_packet([0x01, 1, 2, 3, 4, 5, 6])) {
+    Ok(p) => {
+      pkt_bytes_eq(pkt_frame(p, 0), b"\x01\x02\x03", "code1 f0")
+      pkt_bytes_eq(pkt_frame(p, 1), b"\x04\x05\x06", "code1 f1")
+    }
+    Err(e) => @test.fail(e)
+  }
+  // code 2：首帧显式 3 字节，余下归第二帧
+  match parse_opus_packet(build_packet([0x02, 3, 10, 11, 12, 20, 21, 22])) {
+    Ok(p) => {
+      pkt_bytes_eq(pkt_frame(p, 0), b"\x0a\x0b\x0c", "code2 f0")
+      pkt_bytes_eq(pkt_frame(p, 1), b"\x14\x15\x16", "code2 f1")
+    }
+    Err(e) => @test.fail(e)
+  }
+  // code 3 CBR（fcb=0x08：m=2）：载荷均分
+  match parse_opus_packet(build_packet([0x03, 0x08, 7, 7, 7, 7])) {
+    Ok(p) => {
+      pkt_bytes_eq(pkt_frame(p, 0), b"\x07\x07", "code3c f0")
+      pkt_bytes_eq(pkt_frame(p, 1), b"\x07\x07", "code3c f1")
+    }
+    Err(e) => @test.fail(e)
+  }
+  // code 3 VBR+填充（fcb=0x0B：v=1,p=1,m=2）：pad 头 1、首帧显式 3，
+  // 帧数据区起点越过全部头部，末尾 1 字节填充不入载荷
+  match
+    parse_opus_packet(
+      build_packet([0x03, 0x0B, 1, 3, 10, 20, 30, 40, 50, 60, 99]),
+    ) {
+    Ok(p) => {
+      pkt_bytes_eq(pkt_frame(p, 0), b"\x0a\x14\x1e", "code3v f0")
+      pkt_bytes_eq(pkt_frame(p, 1), b"\x28\x32\x3c", "code3v f1")
+      if p.frame_data(2) != None {
+        @test.fail("code3 越界应为 None")
+      }
+      if p.frame_data(-1) != None {
+        @test.fail("负索引应为 None")
+      }
+    }
+    Err(e) => @test.fail(e)
+  }
+}
+
+///|
 /// 访问器边界：frame_length(i) 越界返回 None。
 test "访问器边界" {
   match parse_opus_packet(build_packet([0xFC, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])) {
