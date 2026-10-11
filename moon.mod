@@ -13,3 +13,7 @@ keywords = [ "opus", "ogg", "audio", "decoder", "codec", "wasm" ]
 description = "纯 MoonBit 实现的 OGG/Opus 音频解码器，不依赖任何 C 库或系统编解码器"
 
 preferred_target = "wasm-gc"
+
+import {
+  "moonbitlang/x@0.5.5",
+}

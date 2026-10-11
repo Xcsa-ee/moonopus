@@ -36,6 +36,15 @@
 
 ## 用法
 
+安装为依赖：
+
+```bash
+moon add LL728/moonopus
+```
+
+只用 `decode_opus_pcm` 这类纯内存接口（传 `Bytes`、收 `Result`）一条就够；要读写
+文件还需 `moon add moonbitlang/x`——依赖不随包传递，解码库本身不依赖它。
+
 `moon.pkg` 中引入依赖：
 
 ```text
@@ -80,6 +89,16 @@ fn decode(data : Bytes) {
   }
 }
 ```
+
+## 命令行示例
+
+仓库自带可运行示例 `cmd/main`，把 `.opus` 解码成 16-bit PCM WAV：
+
+```bash
+moon run cmd/main -- demo/sample.opus out.wav
+```
+
+`demo/sample.opus` 就是演示视频里解码的那段 6 秒比特流，同一条命令即可自行复现输出。
 
 ## 演示
 

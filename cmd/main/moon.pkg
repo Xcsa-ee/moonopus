@@ -1,0 +1,8 @@
+import {
+  "LL728/moonopus",
+  "moonbitlang/core/buffer",
+  "moonbitlang/core/env",
+  "moonbitlang/x/fs",
+}
+
+pkgtype(kind: "executable")
