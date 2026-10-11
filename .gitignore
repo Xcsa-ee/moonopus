@@ -6,3 +6,4 @@ target
 .moonagent/
 __pycache__/
 *.pyc
+demo_cli/
