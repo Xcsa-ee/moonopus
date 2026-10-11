@@ -41,12 +41,14 @@ pub struct CeltDecoderState {
 }
 
 ///|
-/// 全零初始状态（rng = 0）。
+/// 初始状态（rng = 0）。oldBandE 全零，oldLogE/oldLogE2 置 -28——与
+/// libopus OPUS_RESET_STATE 一致；首帧反塌缩的 Ediff 依赖它，置 0 会把
+/// 注入幅度放大 2^28 倍。
 pub fn CeltDecoderState::new() -> CeltDecoderState {
   CeltDecoderState::{
     old_e: Array::make(42, 0.0),
-    old_log_e: Array::make(42, 0.0),
-    old_log_e2: Array::make(42, 0.0),
+    old_log_e: Array::make(42, -28.0),
+    old_log_e2: Array::make(42, -28.0),
     rng: 0L,
   }
 }

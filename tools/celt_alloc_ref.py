@@ -94,7 +94,6 @@ def interp_bits2pulses(dec, start, end, skip_start, bits1, bits2, thresh,
                        cap, pulses, ebits, fine_priority, total, skip_rsv,
                        lm, diag):
     """二次二分插值 + skip 决策 + 余量分摊 + 逐带重平衡。"""
-    m = 1 << lm
     alloc_floor = 1 << BITRES
     floor_gate = alloc_floor + (1 << BITRES)
     log_m = lm << BITRES
@@ -131,13 +130,13 @@ def interp_bits2pulses(dec, start, end, skip_start, bits1, bits2, thresh,
     keep = False
     while not keep and coded_bands > skip_start + 1:
         jb = coded_bands - 1
-        span = eband(coded_bands, m) - eband(start, m)
+        span = T["eband5ms"][coded_bands] - T["eband5ms"][start]
         left = total - psum
         percoeff = celt_udiv(left, span)
         left -= span * percoeff
-        used = eband(jb, m) - eband(start, m)
+        used = T["eband5ms"][jb] - T["eband5ms"][start]
         rem = max(left - used, 0)
-        band_width = eband(coded_bands, m) - eband(jb, m)
+        band_width = T["eband5ms"][coded_bands] - T["eband5ms"][jb]
         band_bits = pulses[jb] + percoeff * band_width + rem
         gate = max(thresh[jb], floor_gate)
         if band_bits >= gate:
@@ -164,13 +163,13 @@ def interp_bits2pulses(dec, start, end, skip_start, bits1, bits2, thresh,
 
     # 余量按带宽分摊
     left = total - psum
-    span = eband(coded_bands, m) - eband(start, m)
+    span = T["eband5ms"][coded_bands] - T["eband5ms"][start]
     percoeff = celt_udiv(left, span)
     left -= span * percoeff
     for j in range(start, coded_bands):
-        pulses[j] += percoeff * (eband(j + 1, m) - eband(j, m))
+        pulses[j] += percoeff * (T["eband5ms"][j + 1] - T["eband5ms"][j])
     for j in range(start, coded_bands):
-        room = eband(j + 1, m) - eband(j, m)
+        room = T["eband5ms"][j + 1] - T["eband5ms"][j]
         take = min(left, room)
         pulses[j] += take
         left -= take
@@ -179,7 +178,7 @@ def interp_bits2pulses(dec, start, end, skip_start, bits1, bits2, thresh,
     balance = 0
     j = start
     while j < coded_bands:
-        n = (eband(j + 1, m) - eband(j, m)) << lm
+        n = (T["eband5ms"][j + 1] - T["eband5ms"][j]) << lm
         bit = pulses[j] + balance
         excess = 0
         if n > 1:
@@ -235,7 +234,6 @@ def interp_bits2pulses(dec, start, end, skip_start, bits1, bits2, thresh,
 def compute_allocation(dec, start, end, offsets, cap, alloc_trim, total, lm,
                        diag):
     """§4.3.3 比特分配（单声道解码）。"""
-    m = 1 << lm
     length = NB_EBANDS
     pulses = [0] * length
     ebits = [0] * length
@@ -253,7 +251,7 @@ def compute_allocation(dec, start, end, offsets, cap, alloc_trim, total, lm,
         diag["a_skip_rsv"] = diag.get("a_skip_rsv", 0) + 1
 
     for j in range(start, end):
-        n0 = eband(j + 1, m) - eband(j, m)
+        n0 = T["eband5ms"][j + 1] - T["eband5ms"][j]
         thresh[j] = max(1 << BITRES, ((3 * n0) << lm << BITRES) >> 4)
         trim_offset[j] = (n0 * (alloc_trim - 5 - lm) * (end - j - 1)
                           * (1 << (lm + BITRES))) >> 6
@@ -269,7 +267,7 @@ def compute_allocation(dec, start, end, offsets, cap, alloc_trim, total, lm,
         mid = (lo + hi) >> 1
         psum, done = 0, False
         for j in range(end - 1, start - 1, -1):
-            n0 = eband(j + 1, m) - eband(j, m)
+            n0 = T["eband5ms"][j + 1] - T["eband5ms"][j]
             bitsj = (n0 * T["alloc"][mid * length + j]) << lm >> 2
             if bitsj > 0:
                 bitsj = max(bitsj + trim_offset[j], 0)
@@ -291,7 +289,7 @@ def compute_allocation(dec, start, end, offsets, cap, alloc_trim, total, lm,
         diag["a_lo_zero"] = diag.get("a_lo_zero", 0) + 1
 
     for j in range(start, end):
-        n0 = eband(j + 1, m) - eband(j, m)
+        n0 = T["eband5ms"][j + 1] - T["eband5ms"][j]
         b1 = (n0 * T["alloc"][lo_edge * length + j]) << lm >> 2
         b2 = (cap[j] if hi_edge >= NB_ALLOC_VECTORS else
               (n0 * T["alloc"][hi_edge * length + j]) << lm >> 2)

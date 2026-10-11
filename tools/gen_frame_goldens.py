@@ -126,7 +126,11 @@ def find_prev_diverged(warm, preset_loge, lm, nbytes, seed0, limit=400000):
             st.rng = base.rng
         else:
             st = FrameState()
+            # 必须与用例播放时的预置状态逐项一致（旧史 0，不用 FrameState
+            # 的初值），否则搜索出的报文在实际播放状态下没有判别力。
+            st.old_e = [0.0] * 42
             st.old_log_e = list(preset_loge)
+            st.old_log_e2 = [0.0] * 42
         return st
 
     fr_mod.anti_collapse = _ORIG_ANTI
@@ -313,13 +317,15 @@ def emit_case(c):
             f"old_log_e: {fmt_f(le)}, old_log_e2: {fmt_f(l2)}, "
             f"rng: {rng}L}}")
     else:
+        # 初始状态必须与 FrameState() 真值一致（oldLogE/oldLogE2 = -28）
+        fresh = FrameState()
         out.append(
             "  let state = CeltDecoderState::{old_e: "
-            + fmt_f([0.0] * 42)
+            + fmt_f(fresh.old_e)
             + ", old_log_e: "
-            + fmt_f([0.0] * 42)
+            + fmt_f(fresh.old_log_e)
             + ", old_log_e2: "
-            + fmt_f([0.0] * 42)
+            + fmt_f(fresh.old_log_e2)
             + ", rng: 0L}")
     for k, (data, lm, dec, res, _diag) in enumerate(c.results):
         h = res["header"]

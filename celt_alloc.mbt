@@ -91,7 +91,6 @@ fn celt_interp_bits2pulses(
   skip_rsv : Int,
   lm : Int,
 ) -> (Int, Int) {
-  let m = 1 << lm
   let mut total = total // 带回分配点时要把预留的 skip 位还回去
   let alloc_floor = 1 << CEL_BITRES // 单声道：C << BITRES
   let log_m = lm << CEL_BITRES
@@ -146,13 +145,13 @@ fn celt_interp_bits2pulses(
   let mut keep = false
   while !keep && coded_bands > skip_start + 1 {
     let jb = coded_bands - 1
-    let span = celt_eband(coded_bands, m) - celt_eband(start, m)
+    let span = cel_eband5ms[coded_bands] - cel_eband5ms[start]
     let mut left = total - psum
     let percoeff = celt_udiv(left, span)
     left -= span * percoeff
-    let used = celt_eband(jb, m) - celt_eband(start, m)
+    let used = cel_eband5ms[jb] - cel_eband5ms[start]
     let rem = if left - used > 0 { left - used } else { 0 }
-    let band_width = celt_eband(coded_bands, m) - celt_eband(jb, m)
+    let band_width = cel_eband5ms[coded_bands] - cel_eband5ms[jb]
     let mut band_bits = pulses[jb] + percoeff * band_width + rem
     let gate = if thresh[jb] > floor_gate { thresh[jb] } else { floor_gate }
     if band_bits >= gate {
@@ -184,14 +183,14 @@ fn celt_interp_bits2pulses(
 
   // ---- 余量按带宽分摊，不够整份的逐带补齐 ----
   let mut left = total - psum
-  let span = celt_eband(coded_bands, m) - celt_eband(start, m)
+  let span = cel_eband5ms[coded_bands] - cel_eband5ms[start]
   let percoeff = celt_udiv(left, span)
   left -= span * percoeff
   for jb in start..<coded_bands {
-    pulses[jb] += percoeff * (celt_eband(jb + 1, m) - celt_eband(jb, m))
+    pulses[jb] += percoeff * (cel_eband5ms[jb + 1] - cel_eband5ms[jb])
   }
   for jb in start..<coded_bands {
-    let room = celt_eband(jb + 1, m) - celt_eband(jb, m)
+    let room = cel_eband5ms[jb + 1] - cel_eband5ms[jb]
     let take = if left < room { left } else { room }
     pulses[jb] += take
     left -= take
@@ -201,7 +200,7 @@ fn celt_interp_bits2pulses(
   let mut balance = 0
   let mut jb = start
   while jb < coded_bands {
-    let n = (celt_eband(jb + 1, m) - celt_eband(jb, m)) << lm
+    let n = (cel_eband5ms[jb + 1] - cel_eband5ms[jb]) << lm
     let bit = pulses[jb] + balance
     let mut excess = 0
     if n > 1 {
@@ -294,7 +293,6 @@ pub fn celt_compute_allocation(
   total : Int,
   lm : Int,
 ) -> CeltAllocation {
-  let m = 1 << lm
   let len = CEL_NB_EBANDS
   let pulses = Array::make(len, 0)
   let ebits = Array::make(len, 0)
@@ -312,7 +310,7 @@ pub fn celt_compute_allocation(
   // 单声道不需要 intensity / dual_stereo 的预留位
 
   for jb in start..<end {
-    let n0 = celt_eband(jb + 1, m) - celt_eband(jb, m)
+    let n0 = cel_eband5ms[jb + 1] - cel_eband5ms[jb]
     // 低于这个阈值必定不分配 PVQ 位
     let floor_bits = 1 << CEL_BITRES // C << BITRES
     let scaled = (3 * n0) << lm << CEL_BITRES >> 4
@@ -339,7 +337,7 @@ pub fn celt_compute_allocation(
     let mut done = false
     let mut jb = end - 1
     while jb >= start {
-      let n0 = celt_eband(jb + 1, m) - celt_eband(jb, m)
+      let n0 = cel_eband5ms[jb + 1] - cel_eband5ms[jb]
       let mut bitsj = (n0 * cel_alloc_vectors[mid * len + jb]) << lm >> 2
       if bitsj > 0 {
         bitsj = if bitsj + trim_offset[jb] > 0 {
@@ -369,7 +367,7 @@ pub fn celt_compute_allocation(
   let hi_edge = lo
 
   for jb in start..<end {
-    let n0 = celt_eband(jb + 1, m) - celt_eband(jb, m)
+    let n0 = cel_eband5ms[jb + 1] - cel_eband5ms[jb]
     let mut b1 = (n0 * cel_alloc_vectors[lo_edge * len + jb]) << lm >> 2
     let mut b2 = if hi_edge >= CEL_NB_ALLOC_VECTORS {
       cap[jb]

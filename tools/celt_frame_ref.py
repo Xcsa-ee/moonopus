@@ -42,8 +42,10 @@ class FrameState:
 
     def __init__(self):
         self.old_e = [0.0] * 42
-        self.old_log_e = [0.0] * 42
-        self.old_log_e2 = [0.0] * 42
+        # libopus OPUS_RESET_STATE 的初值：oldLogE/oldLogE2 = -28（oldBandE
+        # = 0）。首帧反塌缩的 Ediff 依赖它，置 0 会把注入幅度放大 2^28 倍。
+        self.old_log_e = [-28.0] * 42
+        self.old_log_e2 = [-28.0] * 42
         self.rng = 0
 
 

@@ -101,8 +101,14 @@ pub fn decode_opus_pcm(data : Bytes) -> Result[Array[Double], String] {
     return Err("granule \{stream.granule()} 超出实解总长 \{pcm.length()}")
   }
   let out = Array::make(end, 0.0)
+  // celt_sig 域换算（参考实现 arch.h：CELT_SIG_SCALE = 32768.f，
+  // SIG2RES(a) = a/32768、RES2FLOAT(a) = a）：RFC 的综合公式（IMDCT、
+  // comb、deemphasis）在参考实现里工作于 celt_sig 域，即「浮点音频 ×
+  // 32768」；opus_decode_float 在 API 边界除以 32768 得到 [-1,1] 的
+  // 浮点 PCM。此处同口径换算，状态（hist/pending/deemph_mem）仍留在
+  // celt_sig 域跨帧延续，只对最终输出换算。
   for i in 0..<end {
-    out[i] = pcm[skip + i]
+    out[i] = pcm[skip + i] / 32768.0
   }
   Ok(out)
 }
