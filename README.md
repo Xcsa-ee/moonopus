@@ -2,13 +2,14 @@
 
 纯 MoonBit 实现的 Opus 音频解码库：零 C 依赖、零 FFI，可编译到 wasm-gc、js 与 native。
 
-> **当前状态：进行中。** 已完成 Ogg Opus 容器解封装（RFC 7845：页解析、跨页
-> packet 重组、OpusHead/OpusTags 解析与页序校验）、音频包结构解析
-> （RFC 6716 §3：TOC、code 0–3 帧打包、CBR/VBR、填充与畸形包分类）、
-> CELT 频域解码全链（RFC 6716 §4.3，见下）与帧合成模块（IMDCT、基音梳状
-> 滤波），各模块均以双独立实现金标交叉验证。合成链路的端到端接线仍在
-> 进行，**尚未提供 PCM 输出**；解码范围为 CELT-only（SILK 与 hybrid
-> 模式不在范围内）。
+> **当前状态：CELT 解码路径已完成并端到端验证。** 已完成 Ogg Opus 容器
+> 解封装（RFC 7845：页解析、跨页 packet 重组、OpusHead/OpusTags 解析与
+> 页序校验）、音频包结构解析（RFC 6716 §3：TOC、code 0–3 帧打包、
+> CBR/VBR、填充与畸形包分类）、CELT 频域解码全链（RFC 6716 §4.3）与帧
+> 合成（IMDCT、重叠相加、基音梳状滤波、去加重），输出 48 kHz 浮点 PCM；
+> 各模块均以双独立实现金标交叉验证。端到端输出另与真实 libopus 比特流
+> 的解码结果做逐样本差分（5 组夹具、容差 1e-4），全仓 396 项测试通过。
+> 解码范围为 CELT-only（SILK 与 hybrid 模式不在范围内）。
 
 ## 功能
 
@@ -27,6 +28,11 @@
   递归分割（§4.3.4.4）、TF 变换（§4.3.4.5）、谱层量化解码主循环
   （§4.3.4）、反塌缩（§4.3.5）、反归一化（§4.3.6）、帧级解码主流程
 - 帧合成模块：IMDCT 与重叠相加缓冲（§4.3.7）、基音梳状滤波（§4.3.7.1）
+- 帧合成接线与 PCM 输出：`decode_opus_pcm` 全链重放（Ogg → 逐帧 §4.3 →
+  IMDCT/重叠相加/梳状滤波/去加重 → 按 pre-skip 截头、按 granule 截尾，
+  输出 [-1, 1] 的 48 kHz 浮点 PCM）
+- 端到端 PCM 差分闸门：与 libopus 参考解码逐样本比对（真实比特流夹具，
+  容差 1e-4）
 
 ## 用法
 
@@ -64,11 +70,23 @@ fn inspect_packet(pkt : Bytes) {
 }
 ```
 
+解码整条流到 PCM：
+
+```moonbit
+fn decode(data : Bytes) {
+  match @moonopus.decode_opus_pcm(data) {
+    Ok(pcm) => println("decoded \{pcm.length()} samples at 48 kHz")
+    Err(e) => println("decode failed: \{e}")
+  }
+}
+```
+
 ## 开发
 
 ```bash
 moon test --target wasm-gc   # 运行测试
 moon test --target js
+moon test --target native    # 需要本机 C 编译器
 python tools/gen_fixtures.py # 重新生成测试样例（测试页由独立实现构造）
 ```
 

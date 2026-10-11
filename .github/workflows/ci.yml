@@ -44,3 +44,7 @@ jobs:
       # 容器层不依赖后端特性，js 后端应得到同样的结果
       - name: 测试（js 后端）
         run: moon test --target js
+
+      # native 后端（ubuntu-latest 自带系统 C 编译器）
+      - name: 测试（native 后端）
+        run: moon test --target native
