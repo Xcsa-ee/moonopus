@@ -37,7 +37,7 @@ fn wav_encode_pcm16(pcm : Array[Double], sample_rate : Int) -> Bytes {
 fn main {
   let args = @env.args()
   if args.length() < 2 {
-    println("用法: moon run cmd/main -- <input.opus> [output.wav]")
+    println("用法: moon run cmd/main -- <input.opus> [output.wav|.f32]")
     return
   }
   let input = args[1]
@@ -47,7 +47,17 @@ fn main {
     match @moonopus.decode_opus_pcm(data) {
       Ok(pcm) => {
         println("解码成功: \{pcm.length()} 个样本 @ 48 kHz 单声道")
-        @fs.write_bytes_to_file(output, wav_encode_pcm16(pcm, 48000))
+        let blob = if output.has_suffix(".f32") {
+          // 原始 f32le（逐样本 little-endian 32 位浮点），供逐样本差分复现
+          let buf = @buffer.Buffer()
+          for i in 0..<pcm.length() {
+            buf.write_uint_le(Float::from_double(pcm[i]).reinterpret_as_uint())
+          }
+          buf.to_bytes()
+        } else {
+          wav_encode_pcm16(pcm, 48000)
+        }
+        @fs.write_bytes_to_file(output, blob)
         println("已写入: \{output}")
       }
       Err(e) => println("解码失败: \{e}")

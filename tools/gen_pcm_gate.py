@@ -48,11 +48,16 @@ def find_ffmpeg():
     pat = os.path.join(os.path.dirname(ROOT), "_ffmpeg", "_bin", "**",
                        "ffmpeg*.exe")
     got = glob.glob(pat, recursive=True)
-    if not got:
-        raise SystemExit(
-            f"未找到 ffmpeg（扫描 {pat}）。参考端需要带 libopus 的 ffmpeg；"
-            "可将完整构建放到 ../_ffmpeg/_bin/ 后重跑。")
-    return got[0]
+    if got:
+        return got[0]
+    # 新环境兜底：PATH 上的 ffmpeg（须带 libopus 编解码）
+    import shutil
+    on_path = shutil.which("ffmpeg") or shutil.which("ffmpeg.exe")
+    if on_path:
+        return on_path
+    raise SystemExit(
+        f"未找到 ffmpeg（扫描 {pat}，PATH 亦无）。参考端需要带 libopus 的 "
+        "ffmpeg；可将完整构建放到 ../_ffmpeg/_bin/ 后重跑。")
 
 
 def make_wav(path, dur, seed=4242):

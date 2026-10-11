@@ -105,6 +105,7 @@ moon run cmd/main -- demo/sample.opus out.wav
 `docs/demo.mp4`（19.6 秒，带音轨）：解码一段 6 秒的真实 Opus 比特流（合成旋律，
 20 ms 帧、CELT 全频带、64 kbps VBR）得到的 48 kHz PCM 波形、与 libopus 参考解码的
 逐样本差分曲线，以及验证指标。**视频里的音频就是本库解码器输出的 PCM。**
+视频由 `tools/demo/` 中的脚本生成，复现步骤见 `tools/demo/README.md`。
 
 ## 开发
 
