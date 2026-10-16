@@ -1,6 +1,6 @@
 name = "LL728/moonopus"
 
-version = "0.2.1"
+version = "0.2.2"
 
 readme = "README.md"
 
@@ -10,7 +10,7 @@ license = "Apache-2.0"
 
 keywords = [ "opus", "ogg", "audio", "decoder", "codec", "wasm" ]
 
-description = "纯 MoonBit 实现的 OGG/Opus 音频解码器，不依赖任何 C 库或系统编解码器"
+description = "纯 MoonBit 实现的 Ogg Opus 容器与 CELT 音频解码器，不依赖任何 C 库或系统编解码器"
 
 preferred_target = "wasm-gc"
 
