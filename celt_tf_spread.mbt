@@ -17,7 +17,7 @@
 ///
 /// 这个默认值同时被两件事印证：它是参考实现的初值，也是 RFC Table 56 的
 /// PDF {7,2,21,2}/32 里概率最大的那个符号。
-const CEL_SPREAD_NORMAL : Int = 2
+const CEL_SPREAD_NORMAL : Int32 = 2
 
 ///|
 /// 解每带 TF 调整，返回长度 21 的调整值数组（窗外项恒为 0）。
@@ -26,12 +26,12 @@ const CEL_SPREAD_NORMAL : Int = 2
 /// 关。范围解码器会被推进，顺序与帧内其它符号一致。
 pub fn celt_decode_tf(
   dec : RangeDecoder,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   is_transient : Bool,
-  lm : Int,
-  frame_bytes : Int,
-) -> Array[Int] {
+  lm : Int32,
+  frame_bytes : Int32,
+) -> Array[Int32] {
   let budget = frame_bytes * 8
   let is_t = if is_transient { 1 } else { 0 }
   let mut tell = dec.tell()
@@ -76,7 +76,7 @@ pub fn celt_decode_tf(
 ///
 /// `frame_bytes` 是本帧载荷字节数，位数不够就停在默认的 NORMAL——与编码
 /// 端一致：门控失败意味着两端都不写这个符号。
-pub fn celt_decode_spread(dec : RangeDecoder, frame_bytes : Int) -> Int {
+pub fn celt_decode_spread(dec : RangeDecoder, frame_bytes : Int32) -> Int32 {
   if dec.tell() + 4 <= frame_bytes * 8 {
     dec.decode_icdf(cel_spread_icdf, 5)
   } else {

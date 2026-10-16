@@ -5,10 +5,10 @@
 // 并经真实 muxer 产出的 Ogg 文件逐页 CRC 比对锚定。
 
 ///|
-const FIX_CRC_EMPTY : UInt = 0x00000000U
+const FIX_CRC_EMPTY : UInt32 = 0x00000000U
 
 ///|
-const FIX_CRC_OGGS : UInt = 0x5fb0a94fU
+const FIX_CRC_OGGS : UInt32 = 0x5fb0a94fU
 
 ///|
-const FIX_CRC_CHECK : UInt = 0x89a1897fU
+const FIX_CRC_CHECK : UInt32 = 0x89a1897fU

@@ -131,43 +131,43 @@ pub fn open_opus(data : Bytes) -> Result[OpusStream, String] {
 
 ///|
 /// 输出声道数（OpusHead channel count）。
-pub fn OpusStream::channels(self : OpusStream) -> Int {
+pub fn OpusStream::channels(self : OpusStream) -> Int32 {
   self.head.channels
 }
 
 ///|
 /// 起播时应丢弃的 48 kHz 采样数（RFC 7845 §4.2 pre-skip）。
-pub fn OpusStream::pre_skip(self : OpusStream) -> Int {
+pub fn OpusStream::pre_skip(self : OpusStream) -> Int32 {
   self.head.pre_skip
 }
 
 ///|
 /// 编码前原始输入采样率（仅元数据，不是播放采样率；0 表示未指定）。
-pub fn OpusStream::input_sample_rate(self : OpusStream) -> UInt {
+pub fn OpusStream::input_sample_rate(self : OpusStream) -> UInt32 {
   self.head.input_sample_rate
 }
 
 ///|
 /// 解码输出应施加的增益（Q7.8 dB，带符号）。
-pub fn OpusStream::output_gain(self : OpusStream) -> Int {
+pub fn OpusStream::output_gain(self : OpusStream) -> Int32 {
   self.head.output_gain
 }
 
 ///|
 /// 声道映射族（0 / 1 / 255；保留值 2..254 按 255 语义解析）。
-pub fn OpusStream::mapping_family(self : OpusStream) -> Int {
+pub fn OpusStream::mapping_family(self : OpusStream) -> Int32 {
   self.head.mapping_family
 }
 
 ///|
 /// 每包编码流数 N（OpusHead mapping table；family 0 隐含为 1）。
-pub fn OpusStream::stream_count(self : OpusStream) -> Int {
+pub fn OpusStream::stream_count(self : OpusStream) -> Int32 {
   self.head.stream_count
 }
 
 ///|
 /// 其中配置为双声道输出的耦合流数 M（family 0 隐含为 C-1）。
-pub fn OpusStream::coupled_count(self : OpusStream) -> Int {
+pub fn OpusStream::coupled_count(self : OpusStream) -> Int32 {
   self.head.coupled_count
 }
 
@@ -198,13 +198,13 @@ pub fn OpusStream::granule(self : OpusStream) -> Int64 {
 
 ///|
 /// 音频数据包数量（OpusTags 之后的全部逻辑包，尚未做 TOC 解析）。
-pub fn OpusStream::packet_count(self : OpusStream) -> Int {
+pub fn OpusStream::packet_count(self : OpusStream) -> Int32 {
   self.audio.length()
 }
 
 ///|
 /// 第 `i` 个音频数据包；越界返回 `None`。
-pub fn OpusStream::packet(self : OpusStream, i : Int) -> Bytes? {
+pub fn OpusStream::packet(self : OpusStream, i : Int32) -> Bytes? {
   if i < 0 || i >= self.audio.length() {
     None
   } else {

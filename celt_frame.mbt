@@ -63,7 +63,7 @@ pub struct CeltFrameResult {
   /// 反归一化频谱（长度 120*m，IMDCT 的输入）
   freq : Array[Double]
   /// 每带 collapse mask（1 = 未塌缩）
-  collapse_masks : Array[Int]
+  collapse_masks : Array[Int32]
   /// quant_all_bands 线程化后的 LCG 种子（反塌缩的输入值）
   seed : Int64
 }
@@ -77,10 +77,10 @@ pub struct CeltFrameResult {
 /// 顺序与参考实现逐段对齐；返回值含全部可供金标比对的中间产物。
 pub fn celt_decode_frame(
   dec : RangeDecoder,
-  frame_bytes : Int,
-  start : Int,
-  end : Int,
-  lm : Int,
+  frame_bytes : Int32,
+  start : Int32,
+  end : Int32,
+  lm : Int32,
   state : CeltDecoderState,
 ) -> CeltFrameResult {
   let m = 1 << lm
@@ -132,7 +132,7 @@ pub fn celt_decode_frame(
   cel_unquant_fine_energy(dec, state.old_e, start, end, alloc.ebits)
 
   let x : Array[Double] = Array::make(120 * m, 0.0)
-  let masks : Array[Int] = Array::make(nb, 0)
+  let masks : Array[Int32] = Array::make(nb, 0)
   // 形状解码的预算按参考实现是整帧 1/8 bit 减预留（不扣已消费位数——
   // 消费记账由 balance/budget 机制负责），seed 来自跨帧状态。
   let seed = celt_quant_all_bands(

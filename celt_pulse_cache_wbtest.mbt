@@ -11,20 +11,20 @@
 
 ///|
 /// 展平采样点的下标 → (lm, band)：金标按 lm×band 主序、每带定长步进。
-fn pc_cell(i : Int) -> (Int, Int) {
+fn pc_cell(i : Int32) -> (Int32, Int32) {
   let cell = i / PC_B2P_STRIDE
   (cell / CEL_NB_EBANDS, cell % CEL_NB_EBANDS)
 }
 
 ///|
 /// 金标里覆盖的 LM 档数（lm = 0..3），由采样总点数反推。
-fn pc_lm_count() -> Int {
+fn pc_lm_count() -> Int32 {
   pc_b2p_b.length() / PC_B2P_STRIDE / CEL_NB_EBANDS
 }
 
 ///|
 /// 某 (lm, band) 条目的 Kmax（条目首槽）。
-fn pc_kmax(band : Int, lm : Int) -> Int {
+fn pc_kmax(band : Int32, lm : Int32) -> Int32 {
   cel_cache_bits50[cel_cache_index50[(lm + 1) * CEL_NB_EBANDS + band]].to_int()
 }
 

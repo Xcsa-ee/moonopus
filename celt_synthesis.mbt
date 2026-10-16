@@ -28,7 +28,7 @@
 
 ///|
 /// comb 前历史长度：参考实现 decode_buffer_size(2048) − 最大帧长(960)。
-const CEL_SYNTH_HIST : Int = 1088
+const CEL_SYNTH_HIST : Int32 = 1088
 
 ///|
 /// 时域合成状态（跨帧，全零初始化 = 参考实现的 memset 清零）。
@@ -38,17 +38,17 @@ pub struct CeltSynthState {
   /// 连续的 comb 后历史（长度 CEL_SYNTH_HIST，只在尾部滚动）
   hist : Array[Double]
   /// st->postfilter_period_old
-  mut pf_period_old : Int
+  mut pf_period_old : Int32
   /// st->postfilter_gain_old
   mut pf_gain_old : Double
   /// st->postfilter_tapset_old
-  mut pf_tapset_old : Int
+  mut pf_tapset_old : Int32
   /// st->postfilter_period（本帧首段的「新」侧）
-  mut pf_period : Int
+  mut pf_period : Int32
   /// st->postfilter_gain
   mut pf_gain : Double
   /// st->postfilter_tapset
-  mut pf_tapset : Int
+  mut pf_tapset : Int32
   /// st->preemph_memD[0]
   mut deemph_mem : Double
 }
@@ -77,11 +77,11 @@ pub fn CeltSynthState::new() -> CeltSynthState {
 /// `120 << lm` 个样本。
 pub fn celt_synth_frame(
   freq : Array[Double],
-  lm : Int,
+  lm : Int32,
   is_transient : Bool,
-  pf_pitch : Int,
+  pf_pitch : Int32,
   pf_gain : Double,
-  pf_tapset : Int,
+  pf_tapset : Int32,
   state : CeltSynthState,
 ) -> Array[Double] {
   let n = CEL_SHORT_MDCT << lm
@@ -182,10 +182,10 @@ pub struct CeltAudioResult {
 /// 另持一份时域状态 `synth`（`celt` 只管频域跨帧状态）。
 pub fn celt_decode_frame_audio(
   dec : RangeDecoder,
-  frame_bytes : Int,
-  start : Int,
-  end : Int,
-  lm : Int,
+  frame_bytes : Int32,
+  start : Int32,
+  end : Int32,
+  lm : Int32,
   celt : CeltDecoderState,
   synth : CeltSynthState,
 ) -> CeltAudioResult {

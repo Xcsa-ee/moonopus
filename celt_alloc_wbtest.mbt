@@ -11,11 +11,11 @@
 /// 与收尾优先级。任一项不符就报出带下标与两侧数值。
 fn expect_alloc(
   got : CeltAllocation,
-  want_pulses : Array[Int],
-  want_ebits : Array[Int],
-  want_fine_priority : Array[Int],
-  want_coded_bands : Int,
-  want_balance : Int,
+  want_pulses : Array[Int32],
+  want_ebits : Array[Int32],
+  want_fine_priority : Array[Int32],
+  want_coded_bands : Int32,
+  want_balance : Int32,
   tag : String,
 ) -> Unit raise {
   if got.coded_bands != want_coded_bands {

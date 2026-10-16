@@ -3,7 +3,7 @@
 
 ///|
 /// 按字节值数组构造包（TOC 字节等手算值写在用例里）。
-fn build_packet(bytes : Array[Int]) -> Bytes {
+fn build_packet(bytes : Array[Int32]) -> Bytes {
   let buf = @buffer.Buffer()
   for x in bytes {
     buf.write_byte(x.to_byte())
@@ -14,7 +14,7 @@ fn build_packet(bytes : Array[Int]) -> Bytes {
 ///|
 /// RFC 6716 §3.1 Table 2 的测试侧独立转录（与实现侧 opus_config_params
 /// 分开维护，互为交叉检查）。
-fn expected_table2(config : Int) -> (String, String, Int) {
+fn expected_table2(config : Int32) -> (String, String, Int32) {
   if config < 4 {
     let sizes = [480, 960, 1920, 2880]
     ("silk", "nb", sizes[config % 4])
@@ -393,7 +393,7 @@ test "code 3 VBR：帧长与 [R5]/[R7]" {
 
 ///|
 /// 取第 i 帧载荷，缺失即测试失败（测试内助手）。
-fn pkt_frame(p : OpusPacket, i : Int) -> Bytes raise {
+fn pkt_frame(p : OpusPacket, i : Int32) -> Bytes raise {
   match p.frame_data(i) {
     Some(b) => b
     None => @test.fail("frame \{i} 载荷缺失")

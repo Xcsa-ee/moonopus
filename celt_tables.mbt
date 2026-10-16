@@ -61,7 +61,7 @@ let cel_e_means : Array[Double] = [
 
 ///|
 /// 小能量细化的 icdf 表（quant_bands.c small_energy_icdf）。
-let cel_small_energy_icdf : Array[Int] = [2, 1, 0]
+let cel_small_energy_icdf : Array[Int32] = [2, 1, 0]
 
 ///|
 /// 比特分配 caps 表 [168]（§4.3.3 指定直接使用的表数据）。
@@ -81,7 +81,7 @@ let cel_cache_caps50 : Array[Byte] = [
 
 ///|
 /// 脉冲缓存条目索引 [5×21]（§4.3.4.1）：行 = LM+1、列 = 带号，值为 cel_cache_bits50 中的条目起点，−1 表示该 (行, 带) 的 N=0 无效。
-let cel_cache_index50 : Array[Int] = [
+let cel_cache_index50 : Array[Int32] = [
   -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 41, 41, 41, 82, 82, 123, 164, 200,
   222, 0, 0, 0, 0, 0, 0, 0, 0, 41, 41, 41, 41, 123, 123, 123, 164, 164, 240, 266,
   283, 295, 41, 41, 41, 41, 41, 41, 41, 41, 123, 123, 123, 123, 240, 240, 240, 266,
@@ -119,7 +119,7 @@ let cel_cache_bits50 : Array[Byte] = [
 
 ///|
 /// 静态分配表（§4.3.3 Table 57），按 q 主序 × 21 带展开的 11×21；单位 1/32 bit per MDCT bin。与 RFC 正文转置后逐项相等（见上）。
-let cel_alloc_vectors : Array[Int] = [
+let cel_alloc_vectors : Array[Int32] = [
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 90, 80, 75, 69,
   63, 56, 49, 40, 34, 29, 20, 18, 10, 0, 0, 0, 0, 0, 0, 0, 0, 110, 100, 90, 84, 78,
   71, 65, 58, 51, 45, 39, 32, 26, 20, 12, 0, 0, 0, 0, 0, 0, 118, 110, 103, 93, 86,
@@ -136,32 +136,32 @@ let cel_alloc_vectors : Array[Int] = [
 
 ///|
 /// log2(带宽)×8 向上取整（21 项），逐项等于由 RFC Table 55 带宽推出的值。
-let cel_log_n : Array[Int] = [
+let cel_log_n : Array[Int32] = [
   0, 0, 0, 0, 0, 0, 0, 0, 8, 8, 8, 8, 16, 16, 16, 21, 21, 24, 29, 34, 36,
 ]
 
 ///|
 /// allocation trim 的 icdf（11 项 → 0..10），由 RFC Table 58 的 PDF 累积取补得到，与参考实现的 trim_icdf 逐项相等。
-let cel_trim_icdf : Array[Int] = [126, 124, 119, 109, 87, 41, 19, 9, 4, 2, 0]
+let cel_trim_icdf : Array[Int32] = [126, 124, 119, 109, 87, 41, 19, 9, 4, 2, 0]
 
 ///|
 /// pitch post-filter 的 tapset icdf（3 项），RFC Table 56 的 {2,1,1}/4 累积取补得到，与参考实现的 tapset_icdf 逐项相等。
-let cel_tapset_icdf : Array[Int] = [2, 1, 0]
+let cel_tapset_icdf : Array[Int32] = [2, 1, 0]
 
 ///|
 /// TF 调整表（§4.3.1，RFC Table 60-63），按 [LM][4*transient + 2*tf_select + tf_res] 展平的 4×8。正值表示更好的频率分辨率，负值表示更好的时间分辨率；与参考实现的 tf_select_table 逐项相等。
-let cel_tf_select_table : Array[Int] = [
+let cel_tf_select_table : Array[Int32] = [
   0, -1, 0, -1, 0, -1, 0, -1, 0, -1, 0, -2, 1, 0, 1, -1, 0, -2, 0, -3, 2, 0, 1, -1,
   0, -2, 0, -3, 3, 0, 1, -1,
 ]
 
 ///|
 /// 频谱扩展决策的 icdf（4 项 → 0..3），由 RFC Table 56 的 {7,2,21,2}/32 累积取补得到，与参考实现的 spread_icdf 逐项相等。
-let cel_spread_icdf : Array[Int] = [25, 23, 2, 0]
+let cel_spread_icdf : Array[Int32] = [25, 23, 2, 0]
 
 ///|
 /// TF 变换重排用的 sequency 排列（§4.3.4.5，celt/bands.c ordery_table），按 stride=2/4/8/16 分组、组偏移 stride-2 拼成 30 项。每组是 0..s-1 的一个排列；RFC 只提「sequency order」不列数值，故为单源表。
-let cel_orderery : Array[Int] = [
+let cel_orderery : Array[Int32] = [
   1, 0, 3, 0, 2, 1, 7, 0, 4, 3, 6, 1, 5, 2, 15, 0, 8, 7, 12, 3, 11, 4, 14, 1, 9,
   6, 13, 2, 10, 5,
 ]

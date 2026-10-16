@@ -16,7 +16,7 @@ const ALLOC_FLAGS_AF0_BITS : Bytes = b"\x59"
 fn play_af0(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_FLAGS_AF0_BITS；期望值由
   // tools/gen_alloc_flags_goldens.py 的独立参考端算出。
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     72, 72, 72, 72, 72, 72, 72, 72, 112, 112, 112, 112, 249, 249, 249, 363, 363,
     464, 594, 562, 555,
   ]
@@ -43,7 +43,7 @@ const ALLOC_FLAGS_AF1_BITS : Bytes = b"\xa9"
 fn play_af1(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_FLAGS_AF1_BITS；期望值由
   // tools/gen_alloc_flags_goldens.py 的独立参考端算出。
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -70,7 +70,7 @@ const ALLOC_FLAGS_AF2_BITS : Bytes = b"\x59\x3f"
 fn play_af2(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_FLAGS_AF2_BITS；期望值由
   // tools/gen_alloc_flags_goldens.py 的独立参考端算出。
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     72, 72, 72, 72, 72, 72, 72, 72, 112, 112, 112, 112, 249, 249, 249, 363, 363,
     464, 594, 562, 555,
   ]
@@ -97,7 +97,7 @@ const ALLOC_FLAGS_AF3_BITS : Bytes = b"\x93\x93"
 fn play_af3(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_FLAGS_AF3_BITS；期望值由
   // tools/gen_alloc_flags_goldens.py 的独立参考端算出。
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -124,7 +124,7 @@ const ALLOC_FLAGS_AF4_BITS : Bytes = b"\x87\xf0\xfb\xa9"
 fn play_af4(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_FLAGS_AF4_BITS；期望值由
   // tools/gen_alloc_flags_goldens.py 的独立参考端算出。
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     72, 72, 72, 72, 72, 72, 72, 72, 112, 112, 112, 112, 249, 249, 249, 363, 363,
     464, 594, 562, 555,
   ]
@@ -151,7 +151,7 @@ const ALLOC_FLAGS_AF5_BITS : Bytes = b"\x66\x9a\xdb\xf8"
 fn play_af5(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_FLAGS_AF5_BITS；期望值由
   // tools/gen_alloc_flags_goldens.py 的独立参考端算出。
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -178,7 +178,7 @@ const ALLOC_FLAGS_AF6_BITS : Bytes = b"\x17\x03\xc3\x4d\x10\x09\x8f\xe3\x03\xd8\
 fn play_af6(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_FLAGS_AF6_BITS；期望值由
   // tools/gen_alloc_flags_goldens.py 的独立参考端算出。
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     72, 72, 72, 72, 72, 72, 72, 72, 112, 112, 112, 112, 249, 249, 249, 363, 363,
     464, 594, 562, 555,
   ]
@@ -205,7 +205,7 @@ const ALLOC_FLAGS_AF7_BITS : Bytes = b"\xba\x90\xaa\xd3\xcc\xd5\xb5\x3c\x83\x67\
 fn play_af7(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_FLAGS_AF7_BITS；期望值由
   // tools/gen_alloc_flags_goldens.py 的独立参考端算出。
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -232,7 +232,7 @@ const ALLOC_FLAGS_AF8_BITS : Bytes = b"\x73\xf8\xb0\x8e\x5e\x81\x70\x2f\xd9\x77\
 fn play_af8(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_FLAGS_AF8_BITS；期望值由
   // tools/gen_alloc_flags_goldens.py 的独立参考端算出。
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     72, 72, 72, 72, 72, 72, 72, 72, 112, 112, 112, 112, 249, 249, 249, 363, 363,
     464, 594, 562, 555,
   ]
@@ -259,7 +259,7 @@ const ALLOC_FLAGS_AF9_BITS : Bytes = b"\x66\x9b\x53\x4b\xd5\x83\x6e\x3d\xd8\x0f\
 fn play_af9(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_FLAGS_AF9_BITS；期望值由
   // tools/gen_alloc_flags_goldens.py 的独立参考端算出。
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -286,7 +286,7 @@ const ALLOC_FLAGS_AF10_BITS : Bytes = b"\xaa\x68\x60\x2c\x62\x43\xd6\x6e\x54\x6e
 fn play_af10(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_FLAGS_AF10_BITS；期望值由
   // tools/gen_alloc_flags_goldens.py 的独立参考端算出。
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     72, 72, 72, 72, 72, 72, 72, 72, 112, 112, 112, 112, 249, 249, 249, 363, 363,
     464, 594, 562, 555,
   ]
@@ -313,7 +313,7 @@ const ALLOC_FLAGS_AF11_BITS : Bytes = b"\x8b\x70\xc7\xdc\xae\x45\x10\xcd\x78\x5f
 fn play_af11(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_FLAGS_AF11_BITS；期望值由
   // tools/gen_alloc_flags_goldens.py 的独立参考端算出。
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -340,7 +340,7 @@ const ALLOC_FLAGS_AF12_BITS : Bytes = b"\xb9\x98\xfe\x64\x3f\x43\x70\xe8\xb6\xdd
 fn play_af12(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_FLAGS_AF12_BITS；期望值由
   // tools/gen_alloc_flags_goldens.py 的独立参考端算出。
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     249, 249, 249, 249, 249, 249, 249, 249, 514, 514, 514, 514, 1028, 1028, 1028,
     1482, 1482, 1888, 2424, 2322, 2266,
   ]
@@ -367,7 +367,7 @@ const ALLOC_FLAGS_AF13_BITS : Bytes = b"\x70\xa2\x33\x6e\x93\xb1\xe4\xd3\x04\xa4
 fn play_af13(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_FLAGS_AF13_BITS；期望值由
   // tools/gen_alloc_flags_goldens.py 的独立参考端算出。
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     112, 112, 112, 112, 112, 112, 112, 112, 249, 249, 249, 249, 514, 514, 514, 741,
     741, 944, 1212, 1152, 1122,
   ]
@@ -394,7 +394,7 @@ const ALLOC_FLAGS_AG7017_BITS : Bytes = b"\xf1\x51"
 fn play_ag7017(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_FLAGS_AG7017_BITS；期望值由
   // tools/gen_alloc_flags_goldens.py 的独立参考端算出。
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     112, 112, 112, 112, 112, 112, 112, 112, 249, 249, 249, 249, 514, 514, 514, 741,
     741, 944, 1212, 1152, 1122,
   ]
@@ -421,7 +421,7 @@ const ALLOC_FLAGS_AG7024_BITS : Bytes = b"\xc2"
 fn play_ag7024(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_FLAGS_AG7024_BITS；期望值由
   // tools/gen_alloc_flags_goldens.py 的独立参考端算出。
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     72, 72, 72, 72, 72, 72, 72, 72, 112, 112, 112, 112, 249, 249, 249, 363, 363,
     464, 594, 562, 555,
   ]
@@ -448,7 +448,7 @@ const ALLOC_FLAGS_AG7060_BITS : Bytes = b"\xf6\x06\x13\x54\x81\x2f\x96\x75\xcb\x
 fn play_ag7060(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_FLAGS_AG7060_BITS；期望值由
   // tools/gen_alloc_flags_goldens.py 的独立参考端算出。
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     72, 72, 72, 72, 72, 72, 72, 72, 112, 112, 112, 112, 249, 249, 249, 363, 363,
     464, 594, 562, 555,
   ]
@@ -475,7 +475,7 @@ const ALLOC_FLAGS_AG7213_BITS : Bytes = b"\xf0\x5a\xff\xa9\x03\xc0\x11\x7b\xa2\x
 fn play_ag7213(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_FLAGS_AG7213_BITS；期望值由
   // tools/gen_alloc_flags_goldens.py 的独立参考端算出。
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     112, 112, 112, 112, 112, 112, 112, 112, 249, 249, 249, 249, 514, 514, 514, 741,
     741, 944, 1212, 1152, 1122,
   ]

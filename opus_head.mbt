@@ -7,13 +7,13 @@
 ///|
 /// 解析后的 OpusHead 标识头（RFC 7845 §5.1）。
 struct OpusHead {
-  channels : Int
-  pre_skip : Int
-  input_sample_rate : UInt
-  output_gain : Int
-  mapping_family : Int
-  stream_count : Int
-  coupled_count : Int
+  channels : Int32
+  pre_skip : Int32
+  input_sample_rate : UInt32
+  output_gain : Int32
+  mapping_family : Int32
+  stream_count : Int32
+  coupled_count : Int32
   channel_mapping : Array[Byte]
 }
 
@@ -27,7 +27,7 @@ struct OpusTags {
 ///|
 /// OpusHead 固定部分长度：magic(8) + version(1) + channels(1) + pre-skip(2)
 /// + input sample rate(4) + output gain(2) + mapping family(1)。
-const OPUS_HEAD_FIXED_LEN : Int = 19
+const OPUS_HEAD_FIXED_LEN : Int32 = 19
 
 ///|
 /// 解析一个 OpusHead 逻辑包。

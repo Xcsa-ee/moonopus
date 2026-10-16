@@ -35,7 +35,7 @@ fn expect_rot_close(
 ///|
 /// 确定性非对称向量：锯齿模数序列，映到约 [−1, 1]。刻意不用对称形状，
 /// 免得「回扫整段丢掉」这类方向性错误碰巧对不上。
-fn ro_shape(n : Int) -> Array[Double] {
+fn ro_shape(n : Int32) -> Array[Double] {
   let x = Array::make(n, 0.0)
   for j in 0..<n {
     x[j] = ((j * 1103 + 12345) % 99991).to_double() / 49996.0 - 1.0
@@ -61,7 +61,7 @@ fn ro_finite(v : Double) -> Bool {
 
 ///|
 test "展宽旋转：正交变换保持 L2 范数" {
-  let cfgs : Array[(Int, Int, Int)] = [
+  let cfgs : Array[(Int32, Int32, Int32)] = [
     (6, 1, 1),
     (16, 1, 1),
     (24, 4, 1),
@@ -99,7 +99,7 @@ test "展宽旋转：spread=0 与 2k≥n 时输出精确不变" {
     }
   }
   // 2k≥n：参考实现的早退，k 恰好卡在 2k=n 与越过两档都要走到
-  let pairs : Array[(Int, Int)] = [(8, 4), (8, 5), (9, 5), (2, 1)]
+  let pairs : Array[(Int32, Int32)] = [(8, 4), (8, 5), (9, 5), (2, 1)]
   for i in 0..<pairs.length() {
     let (n, k) = pairs[i]
     let x = ro_shape(n)
@@ -136,7 +136,7 @@ test "展宽旋转：时间块之间互不影响" {
 
 ///|
 test "展宽旋转：通用输入确实被改动，且结果保持有限" {
-  let cfgs : Array[(Int, Int, Int)] = [(16, 1, 1), (24, 4, 1), (8, 1, 1)]
+  let cfgs : Array[(Int32, Int32, Int32)] = [(16, 1, 1), (24, 4, 1), (8, 1, 1)]
   for i in 0..<cfgs.length() {
     let (n, b, k) = cfgs[i]
     for spread in [1, 2, 3] {

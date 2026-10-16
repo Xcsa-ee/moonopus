@@ -13,10 +13,10 @@
 
 ///|
 /// OGG CRC-32 查找表（256 项无符号 32 位值），在模块首次访问时惰性构造。
-let crc_lookup : FixedArray[UInt] = {
+let crc_lookup : FixedArray[UInt32] = {
   let table = FixedArray::make(256, 0U)
   for i in 0..<256 {
-    let mut r : UInt = i.reinterpret_as_uint() << 24
+    let mut r : UInt32 = i.reinterpret_as_uint() << 24
     for _ in 0..<8 {
       if (r & 0x80000000U) != 0U {
         r = (r << 1) ^ 0x04c11db7U
@@ -35,11 +35,11 @@ let crc_lookup : FixedArray[UInt] = {
 /// 用于 OGG 页校验——页内 22..26 字节是 CRC 字段本身，校验时需要把它当作 0
 /// 参与计算，因此把页头前 22 字节与 26 字节之后的部分分段累加。
 pub fn ogg_crc32_update(
-  crc : UInt,
+  crc : UInt32,
   data : Bytes,
-  start : Int,
-  len : Int,
-) -> UInt {
+  start : Int32,
+  len : Int32,
+) -> UInt32 {
   let mut c = crc
   for i in start..<(start + len) {
     let byte = data.unsafe_get(i).to_uint()
@@ -53,6 +53,6 @@ pub fn ogg_crc32_update(
 /// 计算一段完整字节序列的 OGG CRC-32，返回 `0` 到 `0xFFFFFFFF` 之间的无符号值。
 ///
 /// 调用方可将其结果写入 OGG 页头的 22..26 字节（小端）做校验。
-pub fn ogg_crc32(data : Bytes) -> UInt {
+pub fn ogg_crc32(data : Bytes) -> UInt32 {
   ogg_crc32_update(0U, data, 0, data.length())
 }

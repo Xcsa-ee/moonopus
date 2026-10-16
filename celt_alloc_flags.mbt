@@ -19,9 +19,9 @@
 /// 分配相关的两个标志。
 pub struct CeltAllocFlags {
   /// 每带的 boost 加成，单位 1/8 bit（长度 21，窗外为 0）
-  offsets : Array[Int]
+  offsets : Array[Int32]
   /// 分配倾斜，0..10；5 表示不加不减，<5 偏低频、>5 偏高频
-  alloc_trim : Int
+  alloc_trim : Int32
 }
 
 ///|
@@ -32,11 +32,11 @@ pub struct CeltAllocFlags {
 /// 范围解码器会被推进，顺序与帧内其它符号一致。
 pub fn celt_decode_alloc_flags(
   dec : RangeDecoder,
-  start : Int,
-  end : Int,
-  cap : Array[Int],
-  frame_bytes : Int,
-  lm : Int,
+  start : Int32,
+  end : Int32,
+  cap : Array[Int32],
+  frame_bytes : Int32,
+  lm : Int32,
 ) -> CeltAllocFlags {
   let offsets = Array::make(CEL_NB_EBANDS, 0)
   // 预算与门控都按 1/8 bit 计；循环里每 boost 一次就扣掉 quanta

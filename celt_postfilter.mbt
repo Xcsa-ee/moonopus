@@ -28,7 +28,7 @@
 
 ///|
 /// 最小基音周期（celt_celt.h 的 COMBFILTER_MINPERIOD）。
-pub const CEL_COMB_MINPERIOD : Int = 15
+pub const CEL_COMB_MINPERIOD : Int32 = 15
 
 ///|
 /// tapset 抽头系数表（RFC §4.3.7.1），行 = tapset 0/1/2，
@@ -47,14 +47,14 @@ let cel_tap_gains : Array[Double] = [
 /// 样本）→ 新增益零捷径 → 常数段。
 pub fn celt_comb_filter(
   buf : Array[Double],
-  base : Int,
-  t0 : Int,
-  t1 : Int,
-  n : Int,
+  base : Int32,
+  t0 : Int32,
+  t1 : Int32,
+  n : Int32,
   g0 : Double,
   g1 : Double,
-  ts0 : Int,
-  ts1 : Int,
+  ts0 : Int32,
+  ts1 : Int32,
   win : Array[Double],
 ) -> Unit {
   if g0 == 0.0 && g1 == 0.0 {

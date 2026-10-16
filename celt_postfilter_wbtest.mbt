@@ -13,7 +13,7 @@
 
 ///|
 /// 确定性输入：幅度 ≤ 1 的历史 + 主体。
-fn pf_signal(n : Int) -> Array[Double] {
+fn pf_signal(n : Int32) -> Array[Double] {
   let x = Array::make(n, 0.0)
   for k in 0..<n {
     let mut v = 0.55 * @math.sin(6.283185307179586 * k.to_double() / 100.0)

@@ -18,7 +18,7 @@
 /// 返回行主序的一维表：`表[a*(k+1) + b]` = V(a,b)，其中 a ≤ n、b ≤ k。
 /// 值用 Int64——码本按 32 bits 设计（§4.3.4.4 与 cwrs.c 注释），(96,5)
 /// 这类组合就已越过 Int32 上限。
-pub fn celt_pvq_v_table(n : Int, k : Int) -> Array[Int64] {
+pub fn celt_pvq_v_table(n : Int32, k : Int32) -> Array[Int64] {
   let cols = k + 1
   let tab = Array::make((n + 1) * cols, 0L)
   // V(0,K)=0 (K>0) 已由初值给出；V(N,0)=1 对所有 N 单独置上
@@ -44,7 +44,11 @@ pub fn celt_pvq_v_table(n : Int, k : Int) -> Array[Int64] {
 ///
 /// k=0 时码字唯一（全零向量），不读比特——参考实现同样断言 k>0 才进此
 /// 函数，由外层负责 k=0 的情况。
-pub fn celt_decode_pulses(dec : RangeDecoder, n : Int, k : Int) -> Array[Int] {
+pub fn celt_decode_pulses(
+  dec : RangeDecoder,
+  n : Int32,
+  k : Int32,
+) -> Array[Int32] {
   if n <= 0 {
     return []
   }
@@ -65,11 +69,11 @@ pub fn celt_decode_pulses(dec : RangeDecoder, n : Int, k : Int) -> Array[Int] {
 ///
 /// `tab` 是 `celt_pvq_v_table(n, k)` 的结果，`idx` 应落在 `[0, V(n,k))`。
 pub fn celt_pvq_unindex(
-  n : Int,
-  k : Int,
+  n : Int32,
+  k : Int32,
   tab : Array[Int64],
   idx : Int64,
-) -> Array[Int] {
+) -> Array[Int32] {
   let cols = k + 1
   let x = Array::make(n, 0)
   if n <= 0 || k <= 0 {

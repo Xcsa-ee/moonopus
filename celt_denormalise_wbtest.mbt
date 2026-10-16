@@ -41,7 +41,7 @@ fn expect_dn_close(
 ///
 /// 与被测代码的 @math.pow 是两条不同的实现，能量断言经它计算才不会和被测
 /// 路径共用同一个指数函数。
-fn dn_pow2i(k : Int) -> Double {
+fn dn_pow2i(k : Int32) -> Double {
   let mut r = 1.0
   if k < 0 {
     let mut i = 0
@@ -62,7 +62,7 @@ fn dn_pow2i(k : Int) -> Double {
 
 ///|
 /// 确定性形状向量：1/8 的倍数，有正有负也有零，取值 ∈ [−1, 1]。
-fn dn_shape(n : Int) -> Array[Double] {
+fn dn_shape(n : Int32) -> Array[Double] {
   let x = Array::make(n, 0.0)
   for j in 0..<n {
     x[j] = ((j * 13 + 5) % 17).to_double() / 8.0 - 1.0
@@ -72,7 +72,7 @@ fn dn_shape(n : Int) -> Array[Double] {
 
 ///|
 /// 由「带 i 的目标 lg = k[i]」反推 band_log_e[i] = k[i] − eMeans[i]。
-fn dn_loge_of_k(k : Array[Int]) -> Array[Double] {
+fn dn_loge_of_k(k : Array[Int32]) -> Array[Double] {
   let loge = Array::make(CEL_NB_EBANDS, 0.0)
   for i in 0..<CEL_NB_EBANDS {
     loge[i] = k[i].to_double() - cel_e_means[i]
@@ -82,7 +82,7 @@ fn dn_loge_of_k(k : Array[Int]) -> Array[Double] {
 
 ///|
 /// 每个 bin 所属的带；max_bin 之后为 −1，不参与编码。
-fn dn_band_of(m : Int) -> Array[Int] {
+fn dn_band_of(m : Int32) -> Array[Int32] {
   let b = Array::make(m * CEL_SHORT_MDCT, -1)
   for i in 0..<CEL_NB_EBANDS {
     for j in celt_eband(i, m)..<celt_eband(i + 1, m) {
@@ -95,7 +95,7 @@ fn dn_band_of(m : Int) -> Array[Int] {
 ///|
 /// 造一组逐带互不相同的 k（严格递增），相邻带增益必然差 2 倍，带界错一位
 /// 就对不上。
-fn dn_strict_k() -> Array[Int] {
+fn dn_strict_k() -> Array[Int32] {
   let k = Array::make(CEL_NB_EBANDS, 0)
   for i in 0..<CEL_NB_EBANDS {
     k[i] = i - 10

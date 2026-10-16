@@ -26,18 +26,18 @@ const CEL_HAAR_C : Double = 0.70710678
 /// TF 链的结构参数，由 (n, b, tf_change) 唯一确定，正反两条链共用。
 priv struct CelTfLayout {
   // 频率分辨率上调的 Haar 级数（tf_change > 0）
-  recombine : Int
+  recombine : Int32
   // 时间分辨率上调的 Haar 级数（tf_change < 0）
-  time_divide : Int
+  time_divide : Int32
   // 时间分辨率循环的起点（前向从这里往下走）
-  b_start : Int
-  nb_start : Int
+  b_start : Int32
+  nb_start : Int32
   // 时间分辨率循环的终点（反向从这里往回退）
-  b_end : Int
-  nb_end : Int
+  b_end : Int32
+  nb_end : Int32
   // 重排的 (N0, stride)；参考实现 `if (B0>1)` 不成立时置 0 表示跳过
-  deint_n0 : Int
-  deint_stride : Int
+  deint_n0 : Int32
+  deint_stride : Int32
   // §4.3.4.5：提高时间分辨率时解码器按 sequency 序重排（长块帧才走这支）
   long_blocks : Bool
 }
@@ -47,7 +47,7 @@ priv struct CelTfLayout {
 /// 循环、以及重排参数的三处赋值。
 ///
 /// `n` 是带的维数，`b` 是时间块数（长块帧为 1，瞬态帧为 M=2^LM）。
-fn celt_tf_layout(n : Int, b : Int, tf_change : Int) -> CelTfLayout {
+fn celt_tf_layout(n : Int32, b : Int32, tf_change : Int32) -> CelTfLayout {
   let long_blocks = b == 1
   let recombine = if tf_change > 0 { tf_change } else { 0 }
   let b_start = b / (1 << recombine)
@@ -93,7 +93,7 @@ fn celt_tf_layout(n : Int, b : Int, tf_change : Int) -> CelTfLayout {
 /// haar1(X, N0, stride)：把向量看成 stride 条链（链内步长 stride），每条链
 /// 两两做一次 Haar 并原地写回。链 j 的第 i 对是
 /// (X[stride*2j+i], X[stride*(2j+1)+i])，覆盖 stride*2*(N0/2) 个元素。
-fn celt_haar1(x : Array[Double], n0 : Int, stride : Int) -> Unit {
+fn celt_haar1(x : Array[Double], n0 : Int32, stride : Int32) -> Unit {
   let half = n0 / 2
   for i in 0..<stride {
     for j in 0..<half {
@@ -112,8 +112,8 @@ fn celt_haar1(x : Array[Double], n0 : Int, stride : Int) -> Unit {
 /// ordery[i] : i) 块，块内按 j 连续。覆盖 n0*stride 个元素。
 fn celt_deinterleave(
   x : Array[Double],
-  n0 : Int,
-  stride : Int,
+  n0 : Int32,
+  stride : Int32,
   hadamard : Bool,
 ) -> Unit {
   let n = n0 * stride
@@ -133,8 +133,8 @@ fn celt_deinterleave(
 /// celt_deinterleave 的逆：分块序 → 交错序。两条互逆是测试里的精确不变量。
 fn celt_interleave(
   x : Array[Double],
-  n0 : Int,
-  stride : Int,
+  n0 : Int32,
+  stride : Int32,
   hadamard : Bool,
 ) -> Unit {
   let n = n0 * stride
@@ -157,9 +157,9 @@ fn celt_interleave(
 /// 反向链按相反次序撤销，两条链互逆由测试保证。
 pub fn celt_tf_forward(
   x : Array[Double],
-  n : Int,
-  b : Int,
-  tf_change : Int,
+  n : Int32,
+  b : Int32,
+  tf_change : Int32,
 ) -> Unit {
   let lay = celt_tf_layout(n, b, tf_change)
   for k in 0..<lay.recombine {
@@ -183,9 +183,9 @@ pub fn celt_tf_forward(
 /// 反向 TF 变换：解码后作用于量化域的已解码向量，还原到频序。
 pub fn celt_tf_inverse(
   x : Array[Double],
-  n : Int,
-  b : Int,
-  tf_change : Int,
+  n : Int32,
+  b : Int32,
+  tf_change : Int32,
 ) -> Unit {
   let lay = celt_tf_layout(n, b, tf_change)
   if lay.deint_stride > 0 {

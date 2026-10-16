@@ -5,7 +5,7 @@
 ///|
 /// 把 48 kHz 单声道 Float PCM 序列化为 16-bit PCM WAV 字节。
 /// 样本超出 [-1,1] 时截断，再四舍五入到 16 位有符号整数。
-fn wav_encode_pcm16(pcm : Array[Double], sample_rate : Int) -> Bytes {
+fn wav_encode_pcm16(pcm : Array[Double], sample_rate : Int32) -> Bytes {
   let frames = pcm.length()
   let data_size = frames * 2
   let buf = @buffer.Buffer()

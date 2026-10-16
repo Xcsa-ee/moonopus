@@ -23,18 +23,18 @@
 pub fn celt_quant_all_bands(
   dec : RangeDecoder,
   x : Array[Double],
-  start : Int,
-  end : Int,
-  lm : Int,
+  start : Int32,
+  end : Int32,
+  lm : Int32,
   short_blocks : Bool,
-  pulses : Array[Int],
-  tf_res : Array[Int],
-  coded_bands : Int,
-  total_bits : Int,
-  balance : Int,
-  spread : Int,
+  pulses : Array[Int32],
+  tf_res : Array[Int32],
+  coded_bands : Int32,
+  total_bits : Int32,
+  balance : Int32,
+  spread : Int32,
   seed : Int64,
-  masks : Array[Int],
+  masks : Array[Int32],
 ) -> Int64 {
   let m = 1 << lm
   let blocks = if short_blocks { m } else { 1 }

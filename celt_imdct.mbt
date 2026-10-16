@@ -30,12 +30,12 @@
 ///|
 /// 模式 overlap：`(shortMdctSize>>2)<<2`，48 kHz 标准模式为 120。
 /// 也是镜像区与跨帧 pending（ov/2 = 60）的长度基准。
-pub const CEL_OVERLAP : Int = 120
+pub const CEL_OVERLAP : Int32 = 120
 
 ///|
 /// IMDCT 长度基准 l->n = 2·shortMdctSize·nbShortMdcts = 1920，按 shift
 /// 减半。
-fn imdct_len(shift : Int) -> Int {
+fn imdct_len(shift : Int32) -> Int32 {
   let mut n = 1920
   let mut i = 0
   while i < shift {
@@ -48,7 +48,7 @@ fn imdct_len(shift : Int) -> Int {
 ///|
 /// 预旋转用的三角表（clt_mdct_init float 生成式，按 shift 取块）：
 /// `t[2i] = −sin(2π(i+0.125)/N)`，`t[2i+1] = cos(2π(i+0.125)/N)`。
-fn imdct_trig(shift : Int) -> Array[Double] {
+fn imdct_trig(shift : Int32) -> Array[Double] {
   let n = imdct_len(shift)
   let n4 = n >> 2
   let t = Array::make(n4 << 1, 0.0)
@@ -67,7 +67,7 @@ fn imdct_trig(shift : Int) -> Array[Double] {
 /// `x1 = x[2i]`、`x2 = x[N/2-1-2i]`；输出槽位 `z[2i] = yi`、
 /// `z[2i+1] = yr`（C 端写进 digit-reverse 槽位后即 DFT 的输入，见文件
 /// 头注释）。
-fn imdct_pre_rotate(x : Array[Double], shift : Int) -> Array[Double] {
+fn imdct_pre_rotate(x : Array[Double], shift : Int32) -> Array[Double] {
   let n = imdct_len(shift)
   let n2 = n >> 1
   let n4 = n >> 2
@@ -89,7 +89,7 @@ fn imdct_pre_rotate(x : Array[Double], shift : Int) -> Array[Double] {
 ///|
 /// 未缩放的 e^{−2πi} DFT：输出同样是交错复数。twiddle 表按
 /// `m = (j·k) mod N4` 索引，O(N²) 直接求和。
-fn imdct_dft(z : Array[Double], n4 : Int) -> Array[Double] {
+fn imdct_dft(z : Array[Double], n4 : Int32) -> Array[Double] {
   let two_pi = 6.283185307179586
   let nd = n4.to_double()
   let tw = Array::make(n4 << 1, 0.0)
@@ -123,9 +123,9 @@ fn imdct_dft(z : Array[Double], n4 : Int) -> Array[Double] {
 /// 读完再落笔；N4 为偶数时中间对不重叠。
 fn imdct_post_rotate(
   buf : Array[Double],
-  base : Int,
+  base : Int32,
   z : Array[Double],
-  shift : Int,
+  shift : Int32,
 ) -> Unit {
   let n = imdct_len(shift)
   let n2 = n >> 1
@@ -168,7 +168,7 @@ fn imdct_post_rotate(
 ///
 ///     out[i]     = old[i]·w[L-1-i] - old[L-1-i]·w[i]
 ///     out[L-1-i] = old[i]·w[i]     + old[L-1-i]·w[L-1-i]
-fn imdct_mirror(buf : Array[Double], base : Int, win : Array[Double]) -> Unit {
+fn imdct_mirror(buf : Array[Double], base : Int32, win : Array[Double]) -> Unit {
   let ov = win.length()
   let half = ov >> 1
   for i in 0..<half {
@@ -185,9 +185,9 @@ fn imdct_mirror(buf : Array[Double], base : Int, win : Array[Double]) -> Unit {
 /// 单块变换写入并镜像：`buf[base .. base+overlap+块长)`。
 fn imdct_write_block(
   buf : Array[Double],
-  base : Int,
+  base : Int32,
   x : Array[Double],
-  shift : Int,
+  shift : Int32,
   win : Array[Double],
 ) -> Unit {
   let z = imdct_pre_rotate(x, shift)
@@ -207,7 +207,7 @@ fn imdct_write_block(
 /// 起，镜像、取输出、截尾巴一气呵成。
 pub fn celt_imdct_frame(
   freq : Array[Double],
-  lm : Int,
+  lm : Int32,
   is_transient : Bool,
   pending : Array[Double],
 ) -> (Array[Double], Array[Double]) {

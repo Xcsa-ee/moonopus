@@ -40,7 +40,7 @@ fn imdct_raw_direct(x : Array[Double]) -> Array[Double] {
 
 ///|
 /// 确定性形状向量：1/8 的倍数，有正有负也有零。
-fn imdct_shape(n : Int) -> Array[Double] {
+fn imdct_shape(n : Int32) -> Array[Double] {
   let x = Array::make(n, 0.0)
   for j in 0..<n {
     x[j] = ((j * 7 + 3) % 19).to_double() / 8.0 - 1.0
@@ -50,7 +50,7 @@ fn imdct_shape(n : Int) -> Array[Double] {
 
 ///|
 /// 取预旋转 + DFT + 后旋转（不镜像），返回缓冲 raw 段。
-fn imdct_raw_segment(x : Array[Double], shift : Int) -> Array[Double] {
+fn imdct_raw_segment(x : Array[Double], shift : Int32) -> Array[Double] {
   let m = x.length()
   let z = imdct_pre_rotate(x, shift)
   let n4 = imdct_len(shift) >> 2

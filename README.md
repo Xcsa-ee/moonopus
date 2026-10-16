@@ -1,6 +1,6 @@
 # moonopus
 
-纯 MoonBit 实现的 Opus 音频解码库：零 C 依赖、零 FFI，可编译到 wasm-gc、js 与 native。
+纯 MoonBit 实现的 Ogg Opus 容器与 CELT 音频解码库：零 C 依赖、零 FFI，可编译到 wasm-gc、js 与 native。
 
 > **当前状态：CELT 解码路径已完成并端到端验证。** 已完成 Ogg Opus 容器
 > 解封装（RFC 7845：页解析、跨页 packet 重组、OpusHead/OpusTags 解析与
@@ -9,7 +9,15 @@
 > 合成（IMDCT、重叠相加、基音梳状滤波、去加重），输出 48 kHz 浮点 PCM；
 > 各模块均以双独立实现金标交叉验证。端到端输出另与真实 libopus 比特流
 > 的解码结果做逐样本差分（5 组夹具、容差 1e-4），全仓 396 项测试通过。
-> 解码范围为 CELT-only（SILK 与 hybrid 模式不在范围内）。
+
+> **兼容目标与进度：最终目标是 SILK、CELT、hybrid 三种模式全覆盖，即
+> RFC 6716 完整解码终点。** 其中 CELT 路径已完成并验证（上）；SILK 语音链
+> （config 0–11）为下一步，hybrid 混合模式（config 12–15）在其后。
+>
+> **当前可解码范围：CELT-only 且全频带（config 28–31）、单声道。**
+> 范围外的输入一律显式返回错误，不静默丢帧：SILK 与 hybrid 模式、
+> 窄带/中带/超宽频 CELT（end<21）、立体声与多声道映射、DTX/空帧（PLC）、
+> Ogg 串联与多流复用均暂不支持。
 
 ## 功能
 

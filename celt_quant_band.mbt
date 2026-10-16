@@ -18,13 +18,13 @@
 
 ///|
 /// fill 位图的 4 bit 交织表（celt_bands.c 的 bit_interleave_table）。
-let cel_bit_interleave : Array[Int] = [
+let cel_bit_interleave : Array[Int32] = [
   0, 1, 1, 1, 2, 3, 3, 3, 2, 3, 3, 3, 2, 3, 3, 3,
 ]
 
 ///|
 /// cm 的 4 bit 反交织表（celt_bands.c 的 bit_deinterleave_table）。
-let cel_bit_deinterleave : Array[Int] = [
+let cel_bit_deinterleave : Array[Int32] = [
   0x00, 0x03, 0x0C, 0x0F, 0x30, 0x33, 0x3C, 0x3F, 0xC0, 0xC3, 0xCC, 0xCF, 0xF0, 0xF3,
   0xFC, 0xFF,
 ]
@@ -32,7 +32,7 @@ let cel_bit_deinterleave : Array[Int] = [
 ///|
 /// fill 的正向 TF 位图变换（C 前段循环的 fill 部分：recombine 段按
 /// 4 bit 交织表重排，时间段逐级 `fill |= fill<<B`）。
-fn celt_fill_transform(fill : Int, lay : CelTfLayout) -> Int {
+fn celt_fill_transform(fill : Int32, lay : CelTfLayout) -> Int32 {
   let mut f = fill
   for _ in 0..<lay.recombine {
     f = cel_bit_interleave[f & 0xF] | (cel_bit_interleave[f >> 4] << 2)
@@ -49,7 +49,7 @@ fn celt_fill_transform(fill : Int, lay : CelTfLayout) -> Int {
 /// cm 的反向 TF 变换（C resynth 段的 cm 部分；X 的变换由 tf_inverse
 /// 完成）：时间分辨率循环逐级 `cm |= cm>>B`，recombine 段按 4 bit
 /// 反交织表重排，最后按 `B<<=recombine` 后的位宽掩蔽。
-fn celt_cm_transform(cm : Int, lay : CelTfLayout) -> Int {
+fn celt_cm_transform(cm : Int32, lay : CelTfLayout) -> Int32 {
   let mut c = cm
   let mut bb = lay.b_end
   for _ in 0..<lay.time_divide {
@@ -73,19 +73,19 @@ pub fn celt_quant_band(
   dec : RangeDecoder,
   x : Array[Double],
   lowband : Array[Double],
-  band : Int,
-  lm : Int,
-  n : Int,
-  b : Int,
-  blocks : Int,
-  tf_change : Int,
-  fill : Int,
+  band : Int32,
+  lm : Int32,
+  n : Int32,
+  b : Int32,
+  blocks : Int32,
+  tf_change : Int32,
+  fill : Int32,
   gain : Double,
-  spread : Int,
+  spread : Int32,
   seed : Int64,
-  remaining : Int,
+  remaining : Int32,
   lowband_out : Array[Double],
-) -> (Int, Int64, Int) {
+) -> (Int32, Int64, Int32) {
   // ---- n==1：quant_band_n1 的符号位 ----
   if n == 1 {
     let mut rem = remaining

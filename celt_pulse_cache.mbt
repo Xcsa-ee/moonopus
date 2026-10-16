@@ -17,18 +17,18 @@
 
 ///|
 /// 伪脉冲索引的最大值（rate.h 的 MAX_PSEUDO），也是条目 Kmax 的上限。
-pub const CEL_MAX_PSEUDO : Int = 40
+pub const CEL_MAX_PSEUDO : Int32 = 40
 
 ///|
 /// celt_bits2pulses 定次二分的轮数（rate.h 的 LOG_MAX_PSEUDO）。
-const CEL_LOG_MAX_PSEUDO : Int = 6
+const CEL_LOG_MAX_PSEUDO : Int32 = 6
 
 ///|
 /// 伪脉冲索引 → 实际脉冲数（rate.h 的 get_pulses）。
 ///
 /// 0..7 原样；8 起每 8 个索引一档，档内取低 3 位线性递增，档号减 1 作
 /// 左移量：8..15 → 8,9,...,15；16..23 → 16,18,...,30；末端 40 → 128。
-pub fn celt_get_pulses(i : Int) -> Int {
+pub fn celt_get_pulses(i : Int32) -> Int32 {
   if i < 8 {
     i
   } else {
@@ -42,7 +42,7 @@ pub fn celt_get_pulses(i : Int) -> Int {
 /// 查表行 = LM+1（解码 lm∈0..3 落在表行 1..4，行 0 只参与条目去重）。
 /// 输入位数先减 1 与表内「位数−1」的存法对齐，再做固定 6 轮二分夹逼；
 /// 收尾 tie-break 在 lo/hi 间取距离更小的一端，距离相等取 lo（`<=`）。
-pub fn celt_bits2pulses(band : Int, lm : Int, bits : Int) -> Int {
+pub fn celt_bits2pulses(band : Int32, lm : Int32, bits : Int32) -> Int32 {
   let off = cel_cache_index50[(lm + 1) * CEL_NB_EBANDS + band]
   let mut lo = 0
   let mut hi = cel_cache_bits50[off].to_int()
@@ -67,7 +67,7 @@ pub fn celt_bits2pulses(band : Int, lm : Int, bits : Int) -> Int {
 /// 伪脉冲索引 → 位数（1/8 bit）（§4.3.4.1，rate.h 的 pulses2bits）。
 ///
 /// 0 个脉冲恒为 0；其余查条目的第 q 槽再加 1（表内存的是「位数−1」）。
-pub fn celt_pulses2bits(band : Int, lm : Int, pulses : Int) -> Int {
+pub fn celt_pulses2bits(band : Int32, lm : Int32, pulses : Int32) -> Int32 {
   let off = cel_cache_index50[(lm + 1) * CEL_NB_EBANDS + band]
   if pulses == 0 {
     0

@@ -18,10 +18,10 @@ const ALLOC_B0_BITS : Bytes = b"\xdb\x32\xc9\xb4\x20\xef\x54\xdf"
 fn play_b0(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B0_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     72, 72, 72, 72, 72, 72, 72, 72, 112, 112, 112, 112, 249, 249, 249, 363, 363,
     464, 594, 562, 555,
   ]
@@ -60,10 +60,10 @@ const ALLOC_B1_BITS : Bytes = b"\x1e\x65\x2e\xc1\x52\xd0\xbf\xcd"
 fn play_b1(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B1_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     72, 72, 72, 72, 72, 72, 72, 72, 112, 112, 112, 112, 249, 249, 249, 363, 363,
     464, 594, 562, 555,
   ]
@@ -102,10 +102,10 @@ const ALLOC_B2_BITS : Bytes = b"\xd7\x71\x49\x42\x8e\xf7\x41\x2f"
 fn play_b2(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B2_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     72, 72, 72, 72, 72, 72, 72, 72, 112, 112, 112, 112, 249, 249, 249, 363, 363,
     464, 594, 562, 555,
   ]
@@ -144,10 +144,10 @@ const ALLOC_B3_BITS : Bytes = b"\xfe\xb8\x71\xed\xe4\xe8\xce\x0d"
 fn play_b3(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B3_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     72, 72, 72, 72, 72, 72, 72, 72, 112, 112, 112, 112, 249, 249, 249, 363, 363,
     464, 594, 562, 555,
   ]
@@ -186,10 +186,10 @@ const ALLOC_B4_BITS : Bytes = b"\xd7\x36\x60\x6b\xae\x1f\x4d\xbd"
 fn play_b4(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B4_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -228,10 +228,10 @@ const ALLOC_B5_BITS : Bytes = b"\xf7\xcc\xd2\x99\xb7\x5b\xfa\x3e"
 fn play_b5(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B5_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -270,10 +270,10 @@ const ALLOC_B6_BITS : Bytes = b"\xb1\x1c\x75\xe3\x06\x69\xa5\x00"
 fn play_b6(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B6_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -312,10 +312,10 @@ const ALLOC_B7_BITS : Bytes = b"\x10\x59\x9f\x5a\x73\x1d\x64\x1b"
 fn play_b7(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B7_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -354,10 +354,10 @@ const ALLOC_B8_BITS : Bytes = b"\xe3\xae\x29\x34\x19\x48\x39\xb0\x05\xa7\x84\x71
 fn play_b8(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B8_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     72, 72, 72, 72, 72, 72, 72, 72, 112, 112, 112, 112, 249, 249, 249, 363, 363,
     464, 594, 562, 555,
   ]
@@ -399,10 +399,10 @@ const ALLOC_B9_BITS : Bytes = b"\x5c\x06\xf9\x27\xf4\x55\x79\x6d\x8c\x2d\x10\x68
 fn play_b9(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B9_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     72, 72, 72, 72, 72, 72, 72, 72, 112, 112, 112, 112, 249, 249, 249, 363, 363,
     464, 594, 562, 555,
   ]
@@ -444,10 +444,10 @@ const ALLOC_B10_BITS : Bytes = b"\x7e\x2a\xd2\xde\xd3\x54\x48\xdf\x68\x36\xb6\x8
 fn play_b10(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B10_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     72, 72, 72, 72, 72, 72, 72, 72, 112, 112, 112, 112, 249, 249, 249, 363, 363,
     464, 594, 562, 555,
   ]
@@ -489,10 +489,10 @@ const ALLOC_B11_BITS : Bytes = b"\xbb\x81\x0f\xd4\x5a\xe2\xcc\xe2\x84\x5b\x3c\xe
 fn play_b11(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B11_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     72, 72, 72, 72, 72, 72, 72, 72, 112, 112, 112, 112, 249, 249, 249, 363, 363,
     464, 594, 562, 555,
   ]
@@ -534,10 +534,10 @@ const ALLOC_B12_BITS : Bytes = b"\xad\x51\x4a\xce\x6a\x0f\xb0\x83\xdd\x65\x4e\xe
 fn play_b12(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B12_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -579,10 +579,10 @@ const ALLOC_B13_BITS : Bytes = b"\xfb\x82\x5e\x0d\xc4\x1c\xc4\x7d\x84\x00\xa9\x2
 fn play_b13(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B13_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -624,10 +624,10 @@ const ALLOC_B14_BITS : Bytes = b"\x02\x7a\x82\x11\xd8\xdb\x58\xee\xfa\x80\xd5\xf
 fn play_b14(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B14_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -669,10 +669,10 @@ const ALLOC_B15_BITS : Bytes = b"\x35\x9a\xf9\xcd\x8f\xdf\x9c\xf4\x04\x38\xd3\xf
 fn play_b15(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B15_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -714,10 +714,10 @@ const ALLOC_B16_BITS : Bytes = b"\xba\xc7\xb2\x57\x20\xb2\xfc\x11\xef\xf4\xca\x5
 fn play_b16(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B16_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     72, 72, 72, 72, 72, 72, 72, 72, 112, 112, 112, 112, 249, 249, 249, 363, 363,
     464, 594, 562, 555,
   ]
@@ -759,10 +759,10 @@ const ALLOC_B17_BITS : Bytes = b"\xf6\xda\x61\x30\xb4\x9f\x34\x95\x8b\x04\x91\xf
 fn play_b17(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B17_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     72, 72, 72, 72, 72, 72, 72, 72, 112, 112, 112, 112, 249, 249, 249, 363, 363,
     464, 594, 562, 555,
   ]
@@ -804,10 +804,10 @@ const ALLOC_B18_BITS : Bytes = b"\xc9\xca\x33\x70\xa2\x70\x5f\xd2\x6e\x39\xc6\x5
 fn play_b18(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B18_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     72, 72, 72, 72, 72, 72, 72, 72, 112, 112, 112, 112, 249, 249, 249, 363, 363,
     464, 594, 562, 555,
   ]
@@ -849,10 +849,10 @@ const ALLOC_B19_BITS : Bytes = b"\x11\xaa\x6d\x33\x7b\xe4\x74\x96\xc0\xc6\x92\x8
 fn play_b19(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B19_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     72, 72, 72, 72, 72, 72, 72, 72, 112, 112, 112, 112, 249, 249, 249, 363, 363,
     464, 594, 562, 555,
   ]
@@ -894,10 +894,10 @@ const ALLOC_B20_BITS : Bytes = b"\x39\x0c\xec\xcf\x5b\x97\x5b\x89\xba\xd4\x8d\x9
 fn play_b20(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B20_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -939,10 +939,10 @@ const ALLOC_B21_BITS : Bytes = b"\x5b\x7d\x81\xd1\xdc\xd1\xab\x37\x35\xe9\x83\x5
 fn play_b21(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B21_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -984,10 +984,10 @@ const ALLOC_B22_BITS : Bytes = b"\x43\xd3\xb8\x2c\xc8\x22\xb4\x79\xdd\x1c\x8c\xf
 fn play_b22(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B22_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -1029,10 +1029,10 @@ const ALLOC_B23_BITS : Bytes = b"\xfa\xe7\xf4\x40\xd8\x9f\x01\xd6\xb0\xb8\xbc\xc
 fn play_b23(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_B23_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -1074,10 +1074,10 @@ const ALLOC_D24_BITS : Bytes = b"\xf0\x5d\x9b\x66\xd1\x87\x7d\xff\xb5\xd4\x6f\x9
 fn play_d24(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_D24_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     64, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -1119,10 +1119,10 @@ const ALLOC_D25_BITS : Bytes = b"\x2a\xf4\x58\x00\xbe\xc0\x76\x21\xc3\xcd\x32\x1
 fn play_d25(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_D25_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     64, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -1164,10 +1164,10 @@ const ALLOC_D26_BITS : Bytes = b"\x3c\xa3\x34\x72\xd7\xfb\xe1\x7a\x01\x29\x38\x9
 fn play_d26(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_D26_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     40, 0, 0, 40, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 40,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -1209,10 +1209,10 @@ const ALLOC_D27_BITS : Bytes = b"\x37\xed\x28\x06\xa5\xcf\x5d\xcc\x5c\xb2\x5b\x8
 fn play_d27(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_D27_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     40, 0, 0, 40, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 40,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -1254,10 +1254,10 @@ const ALLOC_D28_BITS : Bytes = b"\xb5\x5b\x0e\xbe\xb9\x86\x53\x05\x60\x9e\xb6\x0
 fn play_d28(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_D28_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 80, 80, 80,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -1299,10 +1299,10 @@ const ALLOC_D29_BITS : Bytes = b"\xfc\xf7\x5a\x58\xd1\x46\x93\xa3\xcc\xef\xcb\xf
 fn play_d29(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_D29_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 80, 80, 80,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -1344,10 +1344,10 @@ const ALLOC_W30_BITS : Bytes = b"\x95\xe3"
 fn play_w30(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_W30_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -1386,10 +1386,10 @@ const ALLOC_W31_BITS : Bytes = b"\x64"
 fn play_w31(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_W31_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -1428,10 +1428,10 @@ const ALLOC_W32_BITS : Bytes = b"\xee\x7f\x88\x1e\x1b\xb2\xb5\x1c\x1b\x7e\x4a\x0
 fn play_w32(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_W32_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     249, 249, 249, 249, 249, 249, 249, 249, 514, 514, 514, 514, 1028, 1028, 1028,
     1482, 1482, 1888, 2424, 2322, 2266,
   ]
@@ -1473,10 +1473,10 @@ const ALLOC_W33_BITS : Bytes = b"\xfd\xf7\x69\x29\x0f\x26\x13\xb6\x14\x42\xcd\xf
 fn play_w33(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_W33_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     40, 0, 0, 40, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 40,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     112, 112, 112, 112, 112, 112, 112, 112, 249, 249, 249, 249, 514, 514, 514, 741,
     741, 944, 1212, 1152, 1122,
   ]
@@ -1518,10 +1518,10 @@ const ALLOC_X34_BITS : Bytes = b"\xd4\x46\xda\x63\xfb\xff\xf0\x7c\xa8\xe4\xcf\xb
 fn play_x34(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_X34_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     64, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]
@@ -1554,10 +1554,10 @@ const ALLOC_X35_BITS : Bytes = b"\xd8\xef\x2c\x0d\x78\x17\x20\x91\xf6\x16\x95\x4
 fn play_x35(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_X35_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     40, 0, 0, 40, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 40,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     72, 72, 72, 72, 72, 72, 72, 72, 112, 112, 112, 112, 249, 249, 249, 363, 363,
     464, 594, 562, 555,
   ]
@@ -1590,10 +1590,10 @@ const ALLOC_X36_BITS : Bytes = b"\x7b\x76\x46\x1f\x33\x8d\xc6\x2d\x5f\xb6\x24\x9
 fn play_x36(dec : RangeDecoder) -> Unit raise {
   // 载荷见 ALLOC_X36_BITS；期望值由
   // tools/gen_alloc_goldens.py 的独立参考端算出。
-  let offsets : Array[Int] = [
+  let offsets : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 80, 80, 80,
   ]
-  let cap : Array[Int] = [
+  let cap : Array[Int32] = [
     514, 514, 514, 514, 514, 514, 514, 514, 1028, 1028, 1028, 1028, 2064, 2064, 2064,
     2976, 2976, 3792, 4872, 4644, 4532,
   ]

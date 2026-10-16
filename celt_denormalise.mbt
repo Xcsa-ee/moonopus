@@ -31,9 +31,9 @@
 pub fn celt_denormalise(
   x : Array[Double],
   band_log_e : Array[Double],
-  start : Int,
-  end : Int,
-  m : Int,
+  start : Int32,
+  end : Int32,
+  m : Int32,
   silence : Bool,
 ) -> Array[Double] {
   let freq = Array::make(m * CEL_SHORT_MDCT, 0.0)

@@ -18,17 +18,17 @@ fn expect_frame(
   want_transient : Bool,
   want_intra : Bool,
   want_pf_on : Bool,
-  want_pitch : Int,
+  want_pitch : Int32,
   want_gain : Double,
-  want_tapset : Int,
+  want_tapset : Int32,
   want_spectrum : Array[Double],
   want_freq : Array[Double],
-  want_masks : Array[Int],
+  want_masks : Array[Int32],
   want_seed : Int64,
   want_rng : Int64,
   want_val : Int64,
-  want_tell : Int,
-  want_tell_frac : Int,
+  want_tell : Int32,
+  want_tell_frac : Int32,
 ) -> Unit raise {
   let h = res.header
   if h.silence != want_silence {

@@ -33,8 +33,8 @@ fn expect_dec_state(
   tag : String,
   want_rng : Int64,
   want_val : Int64,
-  want_tell : Int,
-  want_tell_frac : Int,
+  want_tell : Int32,
+  want_tell_frac : Int32,
 ) -> Unit raise {
   if dec.rng != want_rng {
     @test.fail("\{tag}: rng \{dec.rng} != \{want_rng}")
@@ -54,14 +54,14 @@ fn expect_dec_state(
 /// 解一个 Laplace 符号并比对符号与解码器状态。
 fn expect_laplace(
   dec : RangeDecoder,
-  fs : Int,
-  decay : Int,
+  fs : Int32,
+  decay : Int32,
   tag : String,
-  want_sym : Int,
+  want_sym : Int32,
   want_rng : Int64,
   want_val : Int64,
-  want_tell : Int,
-  want_tell_frac : Int,
+  want_tell : Int32,
+  want_tell_frac : Int32,
 ) -> Unit raise {
   let got = cel_laplace_decode(dec, fs, decay)
   if got != want_sym {

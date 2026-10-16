@@ -31,9 +31,9 @@
 /// alg_unquant 的断言兜底，后者由带结构保证（参考实现直接整除截断）。
 pub fn celt_exp_rotation(
   x : Array[Double],
-  b : Int,
-  k : Int,
-  spread : Int,
+  b : Int32,
+  k : Int32,
+  spread : Int32,
 ) -> Unit {
   let n = x.length()
   if spread == 0 || 2 * k >= n {
@@ -73,9 +73,9 @@ pub fn celt_exp_rotation(
 /// exp_rotation1 的系数摆法）。回扫起点为负时循环自然不进。
 fn rot_pairs(
   x : Array[Double],
-  off : Int,
-  len : Int,
-  stride : Int,
+  off : Int32,
+  len : Int32,
+  stride : Int32,
   c : Double,
   s : Double,
 ) -> Unit {

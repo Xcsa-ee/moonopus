@@ -14,12 +14,12 @@ fn expect_band(
   want_x : Array[Double],
   lo_out : Array[Double],
   want_lo : Array[Double],
-  cm : Int,
-  want_cm : Int,
+  cm : Int32,
+  want_cm : Int32,
   seed : Int64,
   want_seed : Int64,
-  rem : Int,
-  want_rem : Int,
+  rem : Int32,
+  want_rem : Int32,
   tag : String,
 ) -> Unit raise {
   expect_dn_close(x, want_x, tag, 0.000000000001)

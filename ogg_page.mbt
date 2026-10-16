@@ -12,17 +12,17 @@
 
 ///|
 /// OGG 页固定头长度（不含 segment table 和 body）。
-const OGG_HEADER_SIZE : Int = 27
+const OGG_HEADER_SIZE : Int32 = 27
 
 ///|
 /// 页头类型标志位。
-pub const FLAG_CONTINUED : Int = 0x01
+pub const FLAG_CONTINUED : Int32 = 0x01
 
 ///|
-pub const FLAG_BOS : Int = 0x02
+pub const FLAG_BOS : Int32 = 0x02
 
 ///|
-pub const FLAG_EOS : Int = 0x04
+pub const FLAG_EOS : Int32 = 0x04
 
 ///|
 /// 解析后的 OGG 页。
@@ -32,21 +32,21 @@ pub const FLAG_EOS : Int = 0x04
 /// body 紧随其后，长度为 `body_len`。
 pub struct OggPage {
   data : Bytes
-  offset : Int
-  header_type : Int
+  offset : Int32
+  header_type : Int32
   granule_position : Int64
-  serial_number : UInt
-  page_sequence : UInt
-  checksum : UInt
-  n_segments : Int
-  body_len : Int
+  serial_number : UInt32
+  page_sequence : UInt32
+  checksum : UInt32
+  n_segments : Int32
+  body_len : Int32
 }
 
 ///|
 /// 解析从 `data[offset]` 开始的一个 OGG 页。
 ///
 /// 成功返回页结构；失败返回错误描述（magic 不符 / 版本不支持 / 数据截断 / CRC 校验失败）。
-pub fn OggPage::parse(data : Bytes, offset : Int) -> Result[OggPage, String] {
+pub fn OggPage::parse(data : Bytes, offset : Int32) -> Result[OggPage, String] {
   // 页头长度不足
   if data.length() - offset < OGG_HEADER_SIZE {
     return Err("truncated Ogg page header")
@@ -111,12 +111,12 @@ pub fn OggPage::parse(data : Bytes, offset : Int) -> Result[OggPage, String] {
 
 ///|
 /// 返回整个页的总长度（页头 + segment table + body）。
-pub fn OggPage::total_size(self : OggPage) -> Int {
+pub fn OggPage::total_size(self : OggPage) -> Int32 {
   OGG_HEADER_SIZE + self.n_segments + self.body_len
 }
 
 ///|
 /// 返回 segment table 中第 `i` 项的字节长度（`0 <= i < n_segments`）。
-pub fn OggPage::segment_len(self : OggPage, i : Int) -> Int {
+pub fn OggPage::segment_len(self : OggPage, i : Int32) -> Int32 {
   self.data.unsafe_get(self.offset + OGG_HEADER_SIZE + i).to_int()
 }

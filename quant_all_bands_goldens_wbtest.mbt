@@ -16,14 +16,14 @@ fn play_qab0(dec : RangeDecoder) -> Unit raise {
   // 载荷与期望值由 tools/gen_quant_all_bands_goldens.py 的
   // 独立参考端算出，重放整条主循环后逐项比对。
   let x : Array[Double] = Array::make(120, 0.0)
-  let pulses : Array[Int] = [
+  let pulses : Array[Int32] = [
     85, 28, 158, 88, 71, 25, 27, 96, 130, 113, 150, 129, 79, 110, 138, 84, 130, 127,
     146, 122, 158,
   ]
-  let tf_res : Array[Int] = [
+  let tf_res : Array[Int32] = [
     0, 0, -1, -1, 0, -1, 0, -1, -1, 0, 0, -1, 0, 0, 0, 0, -1, -1, 0, 0, -1,
   ]
-  let masks : Array[Int] = Array::make(21, 0)
+  let masks : Array[Int32] = Array::make(21, 0)
   let seed2 = celt_quant_all_bands(
     dec, x, 0, 21, 0, false, pulses, tf_res, 21, 30000, 400, 0, 555001L, masks,
   )
@@ -49,7 +49,7 @@ fn play_qab0(dec : RangeDecoder) -> Unit raise {
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
     0.0, 0.0, 0.0, 0.0,
   ]
-  let want_masks : Array[Int] = [
+  let want_masks : Array[Int32] = [
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
   ]
   expect_qab(x, want_x, masks, want_masks, seed2, 555001L, "qab0")
@@ -70,14 +70,14 @@ fn play_qab1(dec : RangeDecoder) -> Unit raise {
   // 载荷与期望值由 tools/gen_quant_all_bands_goldens.py 的
   // 独立参考端算出，重放整条主循环后逐项比对。
   let x : Array[Double] = Array::make(120, 0.0)
-  let pulses : Array[Int] = [
+  let pulses : Array[Int32] = [
     108, 149, 88, 137, 69, 36, 125, 103, 130, 146, 62, 48, 10, 119, 44, 146, 55,
     92, 69, 137, 85,
   ]
-  let tf_res : Array[Int] = [
+  let tf_res : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ]
-  let masks : Array[Int] = Array::make(21, 0)
+  let masks : Array[Int32] = Array::make(21, 0)
   let seed2 = celt_quant_all_bands(
     dec, x, 0, 21, 0, false, pulses, tf_res, 21, 20000, 200, 3, 555002L, masks,
   )
@@ -108,7 +108,7 @@ fn play_qab1(dec : RangeDecoder) -> Unit raise {
     -0.010896415522198982, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
   ]
-  let want_masks : Array[Int] = [
+  let want_masks : Array[Int32] = [
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
   ]
   expect_qab(x, want_x, masks, want_masks, seed2, 555002L, "qab1")
@@ -129,14 +129,14 @@ fn play_qab2(dec : RangeDecoder) -> Unit raise {
   // 载荷与期望值由 tools/gen_quant_all_bands_goldens.py 的
   // 独立参考端算出，重放整条主循环后逐项比对。
   let x : Array[Double] = Array::make(120, 0.0)
-  let pulses : Array[Int] = [
+  let pulses : Array[Int32] = [
     9, 15, 15, 100, 33, 57, 56, 86, 132, 96, 33, 110, 114, 75, 75, 81, 68, 0, 0,
     0, 0,
   ]
-  let tf_res : Array[Int] = [
+  let tf_res : Array[Int32] = [
     -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, 0, 0, -1, 0, 0, -1, -1, 0,
   ]
-  let masks : Array[Int] = Array::make(21, 0)
+  let masks : Array[Int32] = Array::make(21, 0)
   let seed2 = celt_quant_all_bands(
     dec, x, 0, 21, 0, false, pulses, tf_res, 17, 20000, 200, 1, 555003L, masks,
   )
@@ -167,7 +167,7 @@ fn play_qab2(dec : RangeDecoder) -> Unit raise {
     -0.274056514542995, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
   ]
-  let want_masks : Array[Int] = [
+  let want_masks : Array[Int32] = [
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
   ]
   expect_qab(x, want_x, masks, want_masks, seed2, 512473879L, "qab2")
@@ -188,13 +188,13 @@ fn play_qab3(dec : RangeDecoder) -> Unit raise {
   // 载荷与期望值由 tools/gen_quant_all_bands_goldens.py 的
   // 独立参考端算出，重放整条主循环后逐项比对。
   let x : Array[Double] = Array::make(120, 0.0)
-  let pulses : Array[Int] = [
+  let pulses : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 4, 0, 0, 4, 4, 0, 4, 4, 0, 4, 0, 0, 4, 4, 4,
   ]
-  let tf_res : Array[Int] = [
+  let tf_res : Array[Int32] = [
     0, 0, 0, -1, 0, -1, 0, 0, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, -1, 0, -1,
   ]
-  let masks : Array[Int] = Array::make(21, 0)
+  let masks : Array[Int32] = Array::make(21, 0)
   let seed2 = celt_quant_all_bands(
     dec, x, 0, 21, 0, false, pulses, tf_res, 21, 60, -20, 1, 555004L, masks,
   )
@@ -224,7 +224,7 @@ fn play_qab3(dec : RangeDecoder) -> Unit raise {
     -0.21284408949525227, -0.21166828090327375, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
   ]
-  let want_masks : Array[Int] = [
+  let want_masks : Array[Int32] = [
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
   ]
   expect_qab(x, want_x, masks, want_masks, seed2, 306157096L, "qab3")
@@ -245,14 +245,14 @@ fn play_qab4(dec : RangeDecoder) -> Unit raise {
   // 载荷与期望值由 tools/gen_quant_all_bands_goldens.py 的
   // 独立参考端算出，重放整条主循环后逐项比对。
   let x : Array[Double] = Array::make(240, 0.0)
-  let pulses : Array[Int] = [
+  let pulses : Array[Int32] = [
     135, 88, 11, 73, 94, 52, 7, 157, 37, 25, 146, 27, 79, 26, 144, 84, 70, 75, 18,
     4, 44,
   ]
-  let tf_res : Array[Int] = [
+  let tf_res : Array[Int32] = [
     -1, 1, -1, 0, -1, -1, -1, -1, 1, 1, 1, 0, -1, 0, -1, 0, 0, 0, -1, -1, 1,
   ]
-  let masks : Array[Int] = Array::make(21, 0)
+  let masks : Array[Int32] = Array::make(21, 0)
   let seed2 = celt_quant_all_bands(
     dec, x, 0, 21, 1, true, pulses, tf_res, 21, 25000, 300, 0, 555005L, masks,
   )
@@ -289,7 +289,7 @@ fn play_qab4(dec : RangeDecoder) -> Unit raise {
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
     0.0, 0.0, 0.0, 0.0,
   ]
-  let want_masks : Array[Int] = [
+  let want_masks : Array[Int32] = [
     3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 3, 3, 1, 3, 1, 3, 3,
   ]
   expect_qab(x, want_x, masks, want_masks, seed2, 4122454433L, "qab4")
@@ -310,14 +310,14 @@ fn play_qab5(dec : RangeDecoder) -> Unit raise {
   // 载荷与期望值由 tools/gen_quant_all_bands_goldens.py 的
   // 独立参考端算出，重放整条主循环后逐项比对。
   let x : Array[Double] = Array::make(120, 0.0)
-  let pulses : Array[Int] = [
+  let pulses : Array[Int32] = [
     45, 137, 64, 45, 159, 88, 56, 70, 54, 91, 132, 154, 158, 110, 88, 128, 34, 38,
     68, 107, 7,
   ]
-  let tf_res : Array[Int] = [
+  let tf_res : Array[Int32] = [
     -1, -1, 0, -1, -1, 0, -1, 0, 0, 0, 0, -1, 0, -1, 0, 0, -1, 0, 0, -1, 0,
   ]
-  let masks : Array[Int] = Array::make(21, 0)
+  let masks : Array[Int32] = Array::make(21, 0)
   let seed2 = celt_quant_all_bands(
     dec, x, 5, 17, 0, false, pulses, tf_res, 12, 15000, 100, 2, 555006L, masks,
   )
@@ -337,7 +337,7 @@ fn play_qab5(dec : RangeDecoder) -> Unit raise {
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
   ]
-  let want_masks : Array[Int] = [
+  let want_masks : Array[Int32] = [
     0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
   ]
   expect_qab(x, want_x, masks, want_masks, seed2, 1734671670L, "qab5")
@@ -358,13 +358,13 @@ fn play_qab6(dec : RangeDecoder) -> Unit raise {
   // 载荷与期望值由 tools/gen_quant_all_bands_goldens.py 的
   // 独立参考端算出，重放整条主循环后逐项比对。
   let x : Array[Double] = Array::make(480, 0.0)
-  let pulses : Array[Int] = [
+  let pulses : Array[Int32] = [
     0, 4, 0, 4, 4, 0, 0, 0, 4, 4, 0, 0, 4, 4, 0, 4, 0, 0, 4, 0, 0,
   ]
-  let tf_res : Array[Int] = [
+  let tf_res : Array[Int32] = [
     -2, -3, 0, -3, -3, -3, 0, -2, -2, -2, -2, 0, -3, -3, 0, 0, 0, -3, -3, -3, -3,
   ]
-  let masks : Array[Int] = Array::make(21, 0)
+  let masks : Array[Int32] = Array::make(21, 0)
   let seed2 = celt_quant_all_bands(
     dec, x, 0, 21, 2, false, pulses, tf_res, 21, 40000, -60, 1, 555008L, masks,
   )
@@ -466,7 +466,7 @@ fn play_qab6(dec : RangeDecoder) -> Unit raise {
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
   ]
-  let want_masks : Array[Int] = [
+  let want_masks : Array[Int32] = [
     1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
   ]
   expect_qab(x, want_x, masks, want_masks, seed2, 4035239268L, "qab6")
@@ -487,14 +487,14 @@ fn play_qab7(dec : RangeDecoder) -> Unit raise {
   // 载荷与期望值由 tools/gen_quant_all_bands_goldens.py 的
   // 独立参考端算出，重放整条主循环后逐项比对。
   let x : Array[Double] = Array::make(120, 0.0)
-  let pulses : Array[Int] = [
+  let pulses : Array[Int32] = [
     24, 69, 122, 1, 15, 124, 112, 30, 21, 52, 73, 49, 121, 74, 33, 66, 89, 115, 142,
     87, 111,
   ]
-  let tf_res : Array[Int] = [
+  let tf_res : Array[Int32] = [
     0, -1, -1, -1, 0, 0, 0, -1, 0, -1, 0, 0, -1, 0, 0, 0, -1, -1, -1, 0, -1,
   ]
-  let masks : Array[Int] = Array::make(21, 0)
+  let masks : Array[Int32] = Array::make(21, 0)
   let seed2 = celt_quant_all_bands(
     dec, x, 7, 21, 0, false, pulses, tf_res, 14, 15000, 100, 1, 555007L, masks,
   )
@@ -524,7 +524,7 @@ fn play_qab7(dec : RangeDecoder) -> Unit raise {
     -0.36674976003323334, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
   ]
-  let want_masks : Array[Int] = [
+  let want_masks : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1,
   ]
   expect_qab(x, want_x, masks, want_masks, seed2, 3515561927L, "qab7")
@@ -545,14 +545,14 @@ fn play_qab8(dec : RangeDecoder) -> Unit raise {
   // 载荷与期望值由 tools/gen_quant_all_bands_goldens.py 的
   // 独立参考端算出，重放整条主循环后逐项比对。
   let x : Array[Double] = Array::make(240, 0.0)
-  let pulses : Array[Int] = [
+  let pulses : Array[Int32] = [
     115, 27, 7, 16, 120, 0, 28, 63, 139, 20, 51, 89, 109, 97, 138, 68, 41, 61, 148,
     83, 73,
   ]
-  let tf_res : Array[Int] = [
+  let tf_res : Array[Int32] = [
     0, 1, -1, -1, 0, 1, -1, 1, 1, 0, -1, -1, 1, 1, 0, 0, -1, 1, 1, 0, 1,
   ]
-  let masks : Array[Int] = Array::make(21, 0)
+  let masks : Array[Int32] = Array::make(21, 0)
   let seed2 = celt_quant_all_bands(
     dec, x, 5, 21, 1, true, pulses, tf_res, 21, 120, 200, 2, 2719025108L, masks,
   )
@@ -607,7 +607,7 @@ fn play_qab8(dec : RangeDecoder) -> Unit raise {
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
   ]
-  let want_masks : Array[Int] = [
+  let want_masks : Array[Int32] = [
     0, 0, 0, 0, 0, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
   ]
   expect_qab(x, want_x, masks, want_masks, seed2, 1203581548L, "qab8")
@@ -628,13 +628,13 @@ fn play_qab9(dec : RangeDecoder) -> Unit raise {
   // 载荷与期望值由 tools/gen_quant_all_bands_goldens.py 的
   // 独立参考端算出，重放整条主循环后逐项比对。
   let x : Array[Double] = Array::make(120, 0.0)
-  let pulses : Array[Int] = [
+  let pulses : Array[Int32] = [
     16, 8, 16, 8, 16, 8, 16, 8, 16, 8, 16, 8, 16, 8, 16, 8, 16, 8, 16, 8, 16,
   ]
-  let tf_res : Array[Int] = [
+  let tf_res : Array[Int32] = [
     0, 0, 0, 0, -1, 0, -1, 0, -1, -1, -1, -1, 0, -1, -1, 0, 0, 0, 0, 0, -1,
   ]
-  let masks : Array[Int] = Array::make(21, 0)
+  let masks : Array[Int32] = Array::make(21, 0)
   let seed2 = celt_quant_all_bands(
     dec, x, 0, 21, 0, false, pulses, tf_res, 21, 33, 40, 1, 999000L, masks,
   )
@@ -665,7 +665,7 @@ fn play_qab9(dec : RangeDecoder) -> Unit raise {
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
     0.0,
   ]
-  let want_masks : Array[Int] = [
+  let want_masks : Array[Int32] = [
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
   ]
   expect_qab(x, want_x, masks, want_masks, seed2, 401238724L, "qab9")
@@ -686,13 +686,13 @@ fn play_qab10(dec : RangeDecoder) -> Unit raise {
   // 载荷与期望值由 tools/gen_quant_all_bands_goldens.py 的
   // 独立参考端算出，重放整条主循环后逐项比对。
   let x : Array[Double] = Array::make(120, 0.0)
-  let pulses : Array[Int] = [
+  let pulses : Array[Int32] = [
     4, 12, 4, 4, 4, 4, 4, 20, 12, 0, 0, 0, 12, 0, 12, 0, 12, 4, 0, 0, 4,
   ]
-  let tf_res : Array[Int] = [
+  let tf_res : Array[Int32] = [
     0, -1, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, -1, 0, -1,
   ]
-  let masks : Array[Int] = Array::make(21, 0)
+  let masks : Array[Int32] = Array::make(21, 0)
   let seed2 = celt_quant_all_bands(
     dec, x, 7, 21, 0, false, pulses, tf_res, 17, 3000, 30, 1, 1003202763L, masks,
   )
@@ -721,7 +721,7 @@ fn play_qab10(dec : RangeDecoder) -> Unit raise {
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
     0.0, 0.0, 0.0, 0.0,
   ]
-  let want_masks : Array[Int] = [
+  let want_masks : Array[Int32] = [
     0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1,
   ]
   expect_qab(x, want_x, masks, want_masks, seed2, 1556891581L, "qab10")
@@ -742,14 +742,14 @@ fn play_qab11(dec : RangeDecoder) -> Unit raise {
   // 载荷与期望值由 tools/gen_quant_all_bands_goldens.py 的
   // 独立参考端算出，重放整条主循环后逐项比对。
   let x : Array[Double] = Array::make(120, 0.0)
-  let pulses : Array[Int] = [
+  let pulses : Array[Int32] = [
     125, 153, 98, 142, 145, 120, 143, 13, 1, 105, 64, 15, 144, 44, 48, 148, 138,
     21, 102, 129, 156,
   ]
-  let tf_res : Array[Int] = [
+  let tf_res : Array[Int32] = [
     0, 0, -1, 0, 0, -1, 0, -1, 0, -1, -1, 0, -1, 0, 0, 0, 0, -1, 0, -1, -1,
   ]
-  let masks : Array[Int] = Array::make(21, 0)
+  let masks : Array[Int32] = Array::make(21, 0)
   let seed2 = celt_quant_all_bands(
     dec, x, 0, 21, 0, true, pulses, tf_res, 12, 120, 0, 3, 1441592189L, masks,
   )
@@ -778,7 +778,7 @@ fn play_qab11(dec : RangeDecoder) -> Unit raise {
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
     0.0, 0.0, 0.0, 0.0,
   ]
-  let want_masks : Array[Int] = [
+  let want_masks : Array[Int32] = [
     1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
   ]
   expect_qab(x, want_x, masks, want_masks, seed2, 3450595627L, "qab11")
@@ -799,14 +799,14 @@ fn play_qab12(dec : RangeDecoder) -> Unit raise {
   // 载荷与期望值由 tools/gen_quant_all_bands_goldens.py 的
   // 独立参考端算出，重放整条主循环后逐项比对。
   let x : Array[Double] = Array::make(120, 0.0)
-  let pulses : Array[Int] = [
+  let pulses : Array[Int32] = [
     39, 96, 157, 136, 117, 85, 76, 134, 57, 46, 117, 74, 96, 120, 51, 71, 137, 81,
     86, 36, 101,
   ]
-  let tf_res : Array[Int] = [
+  let tf_res : Array[Int32] = [
     -1, 0, -1, -1, -1, -1, -1, 0, 0, -1, -1, 0, -1, 0, 0, 0, -1, -1, -1, 0, 0,
   ]
-  let masks : Array[Int] = Array::make(21, 0)
+  let masks : Array[Int32] = Array::make(21, 0)
   let seed2 = celt_quant_all_bands(
     dec, x, 0, 21, 0, false, pulses, tf_res, 12, 200, 50, 3, 2629409417L, masks,
   )
@@ -837,7 +837,7 @@ fn play_qab12(dec : RangeDecoder) -> Unit raise {
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
     0.0,
   ]
-  let want_masks : Array[Int] = [
+  let want_masks : Array[Int32] = [
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
   ]
   expect_qab(x, want_x, masks, want_masks, seed2, 58122199L, "qab12")

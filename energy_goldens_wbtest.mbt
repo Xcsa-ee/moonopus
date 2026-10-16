@@ -1127,7 +1127,7 @@ fn play_fine(dec : RangeDecoder) -> Unit raise {
     -12.0, 0.75, -3.5, -12.0, 0.75, -3.5, -12.0, 0.75, -3.5, -12.0, 0.75, -3.5, -12.0,
     0.75, -3.5, -12.0, 0.75, -3.5, -12.0, 0.75, -3.5,
   ]
-  let extra_quant : Array[Int] = [
+  let extra_quant : Array[Int32] = [
     0, 1, 3, 2, 0, 8, 4, 1, 0, 5, 2, 0, 6, 3, 1, 0, 7, 2, 4, 1, 0,
   ]
   cel_unquant_coarse_energy(dec, old_e, 0, 21, false, 3)
@@ -1162,10 +1162,10 @@ fn play_finalise(dec : RangeDecoder) -> Unit raise {
     -12.0, 0.75, -3.5, -12.0, 0.75, -3.5, -12.0, 0.75, -3.5, -12.0, 0.75, -3.5, -12.0,
     0.75, -3.5, -12.0, 0.75, -3.5, -12.0, 0.75, -3.5,
   ]
-  let fine_quant : Array[Int] = [
+  let fine_quant : Array[Int32] = [
     0, 2, 8, 1, 0, 7, 3, 5, 0, 4, 6, 1, 2, 8, 0, 3, 1, 7, 0, 5, 2,
   ]
-  let fine_priority : Array[Int] = [
+  let fine_priority : Array[Int32] = [
     0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
   ]
   cel_unquant_coarse_energy(dec, old_e, 0, 21, false, 3)
@@ -1200,10 +1200,10 @@ fn play_finalise_short(dec : RangeDecoder) -> Unit raise {
     -12.0, 0.75, -3.5, -12.0, 0.75, -3.5, -12.0, 0.75, -3.5, -12.0, 0.75, -3.5, -12.0,
     0.75, -3.5, -12.0, 0.75, -3.5, -12.0, 0.75, -3.5,
   ]
-  let fine_quant : Array[Int] = [
+  let fine_quant : Array[Int32] = [
     0, 2, 8, 1, 0, 7, 3, 5, 0, 4, 6, 1, 2, 8, 0, 3, 1, 7, 0, 5, 2,
   ]
-  let fine_priority : Array[Int] = [
+  let fine_priority : Array[Int32] = [
     0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
   ]
   cel_unquant_coarse_energy(dec, old_e, 0, 21, false, 3)
@@ -1238,13 +1238,13 @@ fn play_chain(dec : RangeDecoder) -> Unit raise {
     -12.0, 0.75, -3.5, -12.0, 0.75, -3.5, -12.0, 0.75, -3.5, -12.0, 0.75, -3.5, -12.0,
     0.75, -3.5, -12.0, 0.75, -3.5, -12.0, 0.75, -3.5,
   ]
-  let extra_quant : Array[Int] = [
+  let extra_quant : Array[Int32] = [
     0, 1, 3, 2, 0, 8, 4, 1, 0, 5, 2, 0, 6, 3, 1, 0, 7, 2, 4, 1, 0,
   ]
-  let fine_quant : Array[Int] = [
+  let fine_quant : Array[Int32] = [
     0, 2, 8, 1, 0, 7, 3, 5, 0, 4, 6, 1, 2, 8, 0, 3, 1, 7, 0, 5, 2,
   ]
-  let fine_priority : Array[Int] = [
+  let fine_priority : Array[Int32] = [
     0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
   ]
   cel_unquant_coarse_energy(dec, old_e, 0, 21, false, 3)
@@ -1281,7 +1281,7 @@ fn play_fine_exhausted_700(dec : RangeDecoder) -> Unit raise {
     -12.0, 0.75, -3.5, -12.0, 0.75, -3.5, -12.0, 0.75, -3.5, -12.0, 0.75, -3.5, -12.0,
     0.75, -3.5, -12.0, 0.75, -3.5, -12.0, 0.75, -3.5,
   ]
-  let extra_quant : Array[Int] = [
+  let extra_quant : Array[Int32] = [
     8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
   ]
   cel_unquant_coarse_energy(dec, old_e, 0, 21, false, 3)

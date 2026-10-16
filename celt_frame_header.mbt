@@ -22,11 +22,11 @@ pub struct CeltFrameHeader {
   /// pitch post-filter 是否启用
   postfilter_on : Bool
   /// 后滤波周期，§4.3.7.1 规定落在 15..1022；未启用时为 0
-  postfilter_pitch : Int
+  postfilter_pitch : Int32
   /// 后滤波增益 G = 3*(int_gain+1)/32；未启用时为 0
   postfilter_gain : Double
   /// 后滤波 tapset 索引 0..2；未启用时为 0
-  postfilter_tapset : Int
+  postfilter_tapset : Int32
   /// 瞬态帧：切到短块
   is_transient : Bool
   /// 帧内能量：粗能量不预测上一帧
@@ -43,9 +43,9 @@ pub struct CeltFrameHeader {
 /// 范围解码器会被推进，顺序与帧内其它符号一致。
 pub fn celt_decode_frame_header(
   dec : RangeDecoder,
-  frame_bytes : Int,
-  start : Int,
-  lm : Int,
+  frame_bytes : Int32,
+  start : Int32,
+  lm : Int32,
 ) -> CeltFrameHeader {
   let total_bits = frame_bytes * 8
 

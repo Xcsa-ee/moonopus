@@ -21,29 +21,29 @@
 ///|
 /// 5ms 分辨率的频带边界（nbEBands + 1 = 22 项）。单位是「5ms 短块」，
 /// 实际 bin 索引 = 值 × M，M = frame_size / 120。
-let cel_eband5ms : Array[Int] = [
+let cel_eband5ms : Array[Int32] = [
   0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 14, 16, 20, 24, 28, 34, 40, 48, 60, 78, 100,
 ]
 
 ///|
 /// 标准 CELT 模式的带数（§4.3 说正常使用 21 个带）。
-pub const CEL_NB_EBANDS : Int = 21
+pub const CEL_NB_EBANDS : Int32 = 21
 
 ///|
 /// 2.5ms 短块的样本数（48 kHz），也是 eband5ms 的单位基准。
-pub const CEL_SHORT_MDCT : Int = 120
+pub const CEL_SHORT_MDCT : Int32 = 120
 
 ///|
 /// 频带 i 的起始 bin（已乘缩放因子 M）。
 ///
 /// `m` 为帧长缩放（2.5ms→1、5ms→2、10ms→4、20ms→8）。
-pub fn celt_eband(i : Int, m : Int) -> Int {
+pub fn celt_eband(i : Int32, m : Int32) -> Int32 {
   cel_eband5ms[i] * m
 }
 
 ///|
 /// 频带 i 的 MDCT bin 数。
-pub fn celt_band_bins(i : Int, m : Int) -> Int {
+pub fn celt_band_bins(i : Int32, m : Int32) -> Int32 {
   (cel_eband5ms[i + 1] - cel_eband5ms[i]) * m
 }
 
@@ -52,7 +52,7 @@ pub fn celt_band_bins(i : Int, m : Int) -> Int {
 ///
 /// 注意它小于 MDCT 长度 `120*m`：20ms 帧为 800 < 960，即 20–24 kHz
 /// 不参与编码（§4.3 的 band 20 终止于 20000 Hz）。
-pub fn celt_max_bin(m : Int) -> Int {
+pub fn celt_max_bin(m : Int32) -> Int32 {
   cel_eband5ms[CEL_NB_EBANDS] * m
 }
 
@@ -60,7 +60,7 @@ pub fn celt_max_bin(m : Int) -> Int {
 /// 帧长缩放 LM（§4.3 Table 55 的帧尺寸列）：120×2^LM 样本。
 ///
 /// 2.5/5/10/20 ms 对应 LM = 0/1/2/3。
-pub fn celt_lm_of_frame_samples(samples : Int) -> Int? {
+pub fn celt_lm_of_frame_samples(samples : Int32) -> Int32? {
   if samples == 120 {
     Some(0)
   } else if samples == 240 {
@@ -107,7 +107,7 @@ pub fn celt_deemphasis(
 ///
 /// 直接对应 libopus modes.c 的 window 生成式（float 构建）。用于 IMDCT
 /// 的 50% 重叠合成与 post-filter 的窗控。
-pub fn celt_window(i : Int, overlap : Int) -> Double {
+pub fn celt_window(i : Int32, overlap : Int32) -> Double {
   let half_pi = 1.5707963267948966
   let u = half_pi * (i.to_double() + 0.5) / overlap.to_double()
   let s = @math.sin(u)
@@ -122,7 +122,7 @@ pub fn celt_window(i : Int, overlap : Int) -> Double {
 /// 最多可用的比特数（N 为该带的 MDCT bin 数，`>>2` 即规范的「除以 4」）。
 ///
 /// 这一步是规范点名要与参考实现一致的换算，后续比特分配直接消费结果。
-pub fn celt_init_caps(lm : Int, channels : Int) -> Array[Int] {
+pub fn celt_init_caps(lm : Int32, channels : Int32) -> Array[Int32] {
   let base = CEL_NB_EBANDS * (2 * lm + channels - 1)
   let cap = Array::make(CEL_NB_EBANDS, 0)
   for i in 0..<CEL_NB_EBANDS {

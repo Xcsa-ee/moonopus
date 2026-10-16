@@ -14,24 +14,24 @@
 
 ///|
 /// 收尾阶段单带最多再补的细能量位数（quant_bands.c 的 MAX_FINE_BITS）。
-pub const CEL_MAX_FINE_BITS : Int = 8
+pub const CEL_MAX_FINE_BITS : Int32 = 8
 
 ///|
 /// Laplace 分布中 0 的最小概率（1/32768）与保证可表示的最小幅度。
-const CEL_LAPLACE_MINP : Int = 1
+const CEL_LAPLACE_MINP : Int32 = 1
 
 ///|
-const CEL_LAPLACE_LOG_MINP : Int = 0
+const CEL_LAPLACE_LOG_MINP : Int32 = 0
 
 ///|
-const CEL_LAPLACE_NMIN : Int = 16
+const CEL_LAPLACE_NMIN : Int32 = 16
 
 ///|
 /// §4.3.2.1 Laplace pdf 中幅度 1 的频率（参考实现 laplace.c 同名函数）。
 ///
 /// `ft` = 总量扣除 0 与两侧各 NMIN 个最小概率格后的剩余质量，再按
 /// `(16384-decay)>>15` 的 Q15 衰减取其份额。参数域内乘积不超过 2**31。
-fn cel_laplace_get_freq1(fs : Int, decay : Int) -> Int {
+fn cel_laplace_get_freq1(fs : Int32, decay : Int32) -> Int32 {
   let ft = 32768 - CEL_LAPLACE_MINP * (2 * CEL_LAPLACE_NMIN) - fs
   (ft * (16384 - decay)) >> 15
 }
@@ -43,7 +43,7 @@ fn cel_laplace_get_freq1(fs : Int, decay : Int) -> Int {
 /// pdf 关于 0 对称，先在 [0,∞) 上按衰减链定位幅度、再由 fm 落在 0 的
 /// 正侧还是负侧定符号；状态更新统一放在最后，与参考实现一致——中途
 /// 只用 decode_bin_fs 取 fs，不推进解码器。
-fn cel_laplace_decode(dec : RangeDecoder, fs : Int, decay : Int) -> Int {
+fn cel_laplace_decode(dec : RangeDecoder, fs : Int32, decay : Int32) -> Int32 {
   let fm = dec.decode_bin_fs(15)
   let mut fs = fs
   let mut fl = 0
@@ -92,10 +92,10 @@ fn cel_laplace_decode(dec : RangeDecoder, fs : Int, decay : Int) -> Int {
 pub fn cel_unquant_coarse_energy(
   dec : RangeDecoder,
   old_e : Array[Double],
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   intra : Bool,
-  lm : Int,
+  lm : Int32,
 ) -> Unit {
   // e_prob_model 扁平布局 [lm][intra][42]，42 = 2 × 21 带（每带一对参数）
   let model = (if intra { lm * 2 + 1 } else { lm * 2 }) * 42
@@ -144,9 +144,9 @@ pub fn cel_unquant_coarse_energy(
 pub fn cel_unquant_fine_energy(
   dec : RangeDecoder,
   old_e : Array[Double],
-  start : Int,
-  end : Int,
-  extra_quant : Array[Int],
+  start : Int32,
+  end : Int32,
+  extra_quant : Array[Int32],
 ) -> Unit {
   for i in start..<end {
     let extra = extra_quant[i]
@@ -172,11 +172,11 @@ pub fn cel_unquant_fine_energy(
 pub fn cel_unquant_energy_finalise(
   dec : RangeDecoder,
   old_e : Array[Double],
-  start : Int,
-  end : Int,
-  fine_quant : Array[Int],
-  fine_priority : Array[Int],
-  bits_left : Int,
+  start : Int32,
+  end : Int32,
+  fine_quant : Array[Int32],
+  fine_priority : Array[Int32],
+  bits_left : Int32,
 ) -> Unit {
   let mut left = bits_left
   for prio in 0..<2 {

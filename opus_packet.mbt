@@ -26,25 +26,25 @@ pub enum OpusBandwidth {
 ///|
 /// 解析后的 Opus 音频包结构。
 pub struct OpusPacket {
-  config : Int
+  config : Int32
   stereo : Bool
   mode : OpusMode
   bandwidth : OpusBandwidth
-  frame_samples : Int
-  frame_count : Int
-  frame_lengths : Array[Int]
+  frame_samples : Int32
+  frame_count : Int32
+  frame_lengths : Array[Int32]
   is_vbr : Bool
-  padding_bytes : Int
+  padding_bytes : Int32
   /// 原始包字节（frame_data 切片来源）
   data : Bytes
   /// 帧数据区起点：越过 TOC、帧长字段与填充头（§3.2）
-  payload_off : Int
+  payload_off : Int32
 }
 
 ///|
 /// Table 2 帧时长换算到 48 kHz 采样数。
 /// SILK-only（配置 0..11）：10/20/40/60 ms → 480/960/1920/2880。
-fn silk_frame_samples(i : Int) -> Int {
+fn silk_frame_samples(i : Int32) -> Int32 {
   if i == 0 {
     480
   } else if i == 1 {
@@ -58,7 +58,7 @@ fn silk_frame_samples(i : Int) -> Int {
 
 ///|
 /// CELT-only（配置 16..31）：2.5/5/10/20 ms → 120/240/480/960。
-fn celt_frame_samples(i : Int) -> Int {
+fn celt_frame_samples(i : Int32) -> Int32 {
   if i == 0 {
     120
   } else if i == 1 {
@@ -73,7 +73,7 @@ fn celt_frame_samples(i : Int) -> Int {
 ///|
 /// RFC 6716 §3.1 Table 2：配置号 → (模式, 带宽, 每帧 48 kHz 采样数)。
 /// 同区间内的配置号按帧尺寸同序对应（如 0→10 ms、3→60 ms）。
-fn opus_config_params(config : Int) -> (OpusMode, OpusBandwidth, Int) {
+fn opus_config_params(config : Int32) -> (OpusMode, OpusBandwidth, Int32) {
   if config < 12 {
     let bw = if config < 4 {
       OpusBandwidth::Nb
@@ -107,9 +107,9 @@ fn opus_config_params(config : Int) -> (OpusMode, OpusBandwidth, Int) {
 /// 返回 (帧长, 消耗字节数)；字节不足时返回 Err。
 fn decode_frame_length(
   data : Bytes,
-  pos : Int,
-  end : Int,
-) -> Result[(Int, Int), String] {
+  pos : Int32,
+  end : Int32,
+) -> Result[(Int32, Int32), String] {
   if pos >= end {
     return Err("truncated frame length")
   }
@@ -145,7 +145,7 @@ pub fn parse_opus_packet(data : Bytes) -> Result[OpusPacket, String] {
   let stereo = (toc & 4) != 0
   let code = toc & 3
   let (mode, bandwidth, frame_samples) = opus_config_params(config)
-  let frame_lengths : Array[Int] = []
+  let frame_lengths : Array[Int32] = []
   let mut frame_count = 0
   let mut is_vbr = false
   let mut padding_bytes = 0
@@ -302,7 +302,7 @@ pub fn parse_opus_packet(data : Bytes) -> Result[OpusPacket, String] {
 ///|
 /// 第 i 帧的压缩载荷（§3.2 帧数据区，不含 TOC/帧长/填充）。
 /// 越界或负索引返回 None。
-pub fn OpusPacket::frame_data(self : OpusPacket, i : Int) -> Bytes? {
+pub fn OpusPacket::frame_data(self : OpusPacket, i : Int32) -> Bytes? {
   if i < 0 || i >= self.frame_count {
     return None
   }
@@ -320,7 +320,7 @@ pub fn OpusPacket::frame_data(self : OpusPacket, i : Int) -> Bytes? {
 
 ///|
 /// 配置号（0..31）。
-pub fn OpusPacket::config(self : OpusPacket) -> Int {
+pub fn OpusPacket::config(self : OpusPacket) -> Int32 {
   self.config
 }
 
@@ -344,19 +344,19 @@ pub fn OpusPacket::bandwidth(self : OpusPacket) -> OpusBandwidth {
 
 ///|
 /// 每帧时长（48 kHz 采样数；2.5 ms=120 … 60 ms=2880）。
-pub fn OpusPacket::frame_samples(self : OpusPacket) -> Int {
+pub fn OpusPacket::frame_samples(self : OpusPacket) -> Int32 {
   self.frame_samples
 }
 
 ///|
 /// 包内帧数（code 0/1/2 为 1/2/2，code 3 为 M）。
-pub fn OpusPacket::frame_count(self : OpusPacket) -> Int {
+pub fn OpusPacket::frame_count(self : OpusPacket) -> Int32 {
   self.frame_count
 }
 
 ///|
 /// 第 `i` 帧的压缩字节长；越界返回 `None`。
-pub fn OpusPacket::frame_length(self : OpusPacket, i : Int) -> Int? {
+pub fn OpusPacket::frame_length(self : OpusPacket, i : Int32) -> Int32? {
   if i < 0 || i >= self.frame_lengths.length() {
     None
   } else {
@@ -372,12 +372,12 @@ pub fn OpusPacket::is_vbr(self : OpusPacket) -> Bool {
 
 ///|
 /// Opus 层尾部填充字节数（无填充时为 0）。
-pub fn OpusPacket::padding_bytes(self : OpusPacket) -> Int {
+pub fn OpusPacket::padding_bytes(self : OpusPacket) -> Int32 {
   self.padding_bytes
 }
 
 ///|
 /// 包内音频总时长（48 kHz 采样数）。
-pub fn OpusPacket::duration_48k(self : OpusPacket) -> Int {
+pub fn OpusPacket::duration_48k(self : OpusPacket) -> Int32 {
   self.frame_count * self.frame_samples
 }

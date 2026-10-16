@@ -33,8 +33,8 @@ pub fn celt_lcg_rand(seed : Int64) -> Int64 {
 /// EPSILON 是浮点构建的防零除下界（1e-15）。
 pub fn celt_renormalise_vector(
   x : Array[Double],
-  off : Int,
-  n : Int,
+  off : Int32,
+  n : Int32,
   gain : Double,
 ) -> Unit {
   let mut e = 0.000000000000001
@@ -58,14 +58,14 @@ pub fn celt_renormalise_vector(
 /// `seed` 按值传入，不改解码器状态（参考实现传 st->rng 的拷贝）。
 pub fn celt_anti_collapse(
   x : Array[Double],
-  collapse_masks : Array[Int],
-  lm : Int,
-  start : Int,
-  end : Int,
+  collapse_masks : Array[Int32],
+  lm : Int32,
+  start : Int32,
+  end : Int32,
   band_log_e : Array[Double],
   prev1_log_e : Array[Double],
   prev2_log_e : Array[Double],
-  pulses : Array[Int],
+  pulses : Array[Int32],
   seed : Int64,
 ) -> Unit {
   let m = 1 << lm
@@ -121,7 +121,11 @@ pub fn celt_anti_collapse(
 ///|
 /// 反塌缩预留位数（celt_decoder.c 的 anti_collapse_rsv）：瞬态帧、
 /// LM≥2 且可用预算不低于 (LM+2) 个 1/8-bit 单位时才预留 1 bit。
-pub fn celt_anti_collapse_rsv(is_transient : Bool, lm : Int, bits : Int) -> Int {
+pub fn celt_anti_collapse_rsv(
+  is_transient : Bool,
+  lm : Int32,
+  bits : Int32,
+) -> Int32 {
   if is_transient && lm >= 2 && bits >= (lm + 2) << CEL_BITRES {
     1 << CEL_BITRES
   } else {
@@ -131,7 +135,7 @@ pub fn celt_anti_collapse_rsv(is_transient : Bool, lm : Int, bits : Int) -> Int 
 
 ///|
 /// 反塌缩标志位解码（celt_decoder.c：预留了才读，读 1 个 raw bit）。
-pub fn celt_decode_anti_collapse_flag(dec : RangeDecoder, rsv : Int) -> Int {
+pub fn celt_decode_anti_collapse_flag(dec : RangeDecoder, rsv : Int32) -> Int32 {
   if rsv > 0 {
     dec.dec_bits(1)
   } else {

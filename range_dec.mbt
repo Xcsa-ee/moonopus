@@ -17,13 +17,13 @@
 /// 范围解码器状态。创建后即可连续解码，所有 mut 字段透过 self 引用更新。
 pub struct RangeDecoder {
   data : Bytes
-  nbytes : Int
-  mut offs : Int
-  mut leftover : Int
+  nbytes : Int32
+  mut offs : Int32
+  mut leftover : Int32
   mut val : Int64
   mut rng : Int64
-  mut raw_read : Int
-  mut skipped : Int
+  mut raw_read : Int32
+  mut skipped : Int32
 }
 
 ///|
@@ -50,7 +50,7 @@ pub fn RangeDecoder::new(data : Bytes) -> RangeDecoder {
 
 ///|
 /// 读取下一字节；超出输入末尾补 0（§4.1.2.1）。
-fn RangeDecoder::next_byte(self : RangeDecoder) -> Int {
+fn RangeDecoder::next_byte(self : RangeDecoder) -> Int32 {
   let b = if self.offs < self.nbytes {
     self.data.unsafe_get(self.offs).to_int()
   } else {
@@ -77,7 +77,7 @@ fn RangeDecoder::normalize(self : RangeDecoder) -> Unit {
 
 ///|
 /// ec_decode()：算出落在目标符号区间内的 16 位值 fs（§4.1.2）。
-fn RangeDecoder::decode(self : RangeDecoder, ft : Int) -> Int {
+fn RangeDecoder::decode(self : RangeDecoder, ft : Int32) -> Int32 {
   let d = self.rng / ft.to_int64()
   if d == 0L {
     return ft
@@ -93,9 +93,9 @@ fn RangeDecoder::decode(self : RangeDecoder, ft : Int) -> Int {
 /// fl>0 分支（RFC §4.1.2 公式与参考实现 entdec.c 的 ec_dec_update 一致）。
 fn RangeDecoder::update(
   self : RangeDecoder,
-  fl : Int,
-  fh : Int,
-  ft : Int,
+  fl : Int32,
+  fh : Int32,
+  ft : Int32,
 ) -> Unit {
   let s = self.rng / ft.to_int64()
   self.val = self.val - s * (ft - fh).to_int64()
@@ -112,7 +112,10 @@ fn RangeDecoder::update(
 ///
 /// `freqs[i]` 是符号 i 的频率，其和即 ft；fl/fh 由累计和推出，符号由
 /// 比特流决定而非由调用方指定。fs 不落在任何符号区间时属实现错误。
-pub fn RangeDecoder::decode_ctx(self : RangeDecoder, freqs : Array[Int]) -> Int {
+pub fn RangeDecoder::decode_ctx(
+  self : RangeDecoder,
+  freqs : Array[Int32],
+) -> Int32 {
   let mut ft = 0
   for f in freqs {
     ft += f
@@ -132,7 +135,10 @@ pub fn RangeDecoder::decode_ctx(self : RangeDecoder, freqs : Array[Int]) -> Int 
 
 ///|
 /// ec_dec_bit_logp()：解一个二元符号，logp 是「1」的 log2 概率（§4.1.3.2）。
-pub fn RangeDecoder::decode_bit_logp(self : RangeDecoder, logp : Int) -> Int {
+pub fn RangeDecoder::decode_bit_logp(
+  self : RangeDecoder,
+  logp : Int32,
+) -> Int32 {
   let ft = 1 << logp
   let fs = self.decode(ft)
   if fs < ft - 1 {
@@ -150,7 +156,7 @@ pub fn RangeDecoder::decode_bit_logp(self : RangeDecoder, logp : Int) -> Int {
 /// 调用方自行决定用哪个 (fl, fh, ft) 调 `update`——Laplace 解码正是先取
 /// `fs` 再自行构造目标区间（见 §4.3.2 的能量解码）。这与
 /// `decode_bit_logp`（decode+update 的二元快捷路径）是两回事。
-pub fn RangeDecoder::decode_bin_fs(self : RangeDecoder, ftb : Int) -> Int {
+pub fn RangeDecoder::decode_bin_fs(self : RangeDecoder, ftb : Int32) -> Int32 {
   self.decode(1 << ftb)
 }
 
@@ -161,9 +167,9 @@ pub fn RangeDecoder::decode_bin_fs(self : RangeDecoder, ftb : Int) -> Int {
 /// 满足 `fs < (1<<ftb) - icdf[k]` 的 k。
 pub fn RangeDecoder::decode_icdf(
   self : RangeDecoder,
-  icdf : Array[Int],
-  ftb : Int,
-) -> Int {
+  icdf : Array[Int32],
+  ftb : Int32,
+) -> Int32 {
   let ft = 1 << ftb
   let fs = self.decode(ft)
   let mut k = 0
@@ -181,7 +187,7 @@ pub fn RangeDecoder::decode_icdf(
 ///
 /// ftb<=8 时直接解一个符号；否则高 8 位走范围码、余位走 raw bits。
 /// 结果可能超出 0..ft-1，此时按 §4.1.5 视为帧损坏（取模退回）。
-pub fn RangeDecoder::decode_uint(self : RangeDecoder, ft : Int) -> Int {
+pub fn RangeDecoder::decode_uint(self : RangeDecoder, ft : Int32) -> Int32 {
   self.decode_uint64(ft.to_int64()).to_int()
 }
 
@@ -220,7 +226,7 @@ pub fn RangeDecoder::decode_uint64(self : RangeDecoder, ft : Int64) -> Int64 {
 /// ec_dec_bits()：raw bits 从帧尾反向打包，LSB 起（§4.1.4）。
 ///
 /// 与范围解码器的前向读取相互独立，允许重叠消费同一段数据。
-pub fn RangeDecoder::dec_bits(self : RangeDecoder, nbits : Int) -> Int {
+pub fn RangeDecoder::dec_bits(self : RangeDecoder, nbits : Int32) -> Int32 {
   let mut v = 0
   for i in 0..<nbits {
     let pos = self.nbytes - 1 - self.raw_read / 8
@@ -241,7 +247,7 @@ pub fn RangeDecoder::dec_bits(self : RangeDecoder, nbits : Int) -> Int {
 /// 再加静音帧一次性跳过的位数。
 ///
 /// 初始化完成后为 33（= 8*4 + 1），与规范给的初值一致。
-fn RangeDecoder::nbits_total(self : RangeDecoder) -> Int {
+fn RangeDecoder::nbits_total(self : RangeDecoder) -> Int32 {
   8 * self.offs + 1 + self.raw_read + self.skipped
 }
 
@@ -251,7 +257,7 @@ fn RangeDecoder::nbits_total(self : RangeDecoder) -> Int {
 /// 对应静音帧的处理：参考实现令 nbits_total += nbits - ec_tell()，使
 /// ec_tell() 之后返回帧长，于是帧首后续几个符号的门控（tell+16 之类）全部
 /// 落空、一个都不读。位置状态（rng/val/字节游标）保持不变。
-pub fn RangeDecoder::skip_bits_to(self : RangeDecoder, nbits : Int) -> Unit {
+pub fn RangeDecoder::skip_bits_to(self : RangeDecoder, nbits : Int32) -> Unit {
   let cur = self.nbits_total()
   if nbits > cur {
     self.skipped += nbits - cur
@@ -260,7 +266,7 @@ pub fn RangeDecoder::skip_bits_to(self : RangeDecoder, nbits : Int) -> Unit {
 
 ///|
 /// rng 的最高位位置，即 §1.1 的 ilog(rng) = floor(log2(rng)) + 1。
-fn RangeDecoder::ilog_rng(self : RangeDecoder) -> Int {
+fn RangeDecoder::ilog_rng(self : RangeDecoder) -> Int32 {
   let mut x = self.rng
   let mut n = 0
   while x > 0L {
@@ -272,7 +278,7 @@ fn RangeDecoder::ilog_rng(self : RangeDecoder) -> Int {
 
 ///|
 /// ec_tell()：已用位数的保守上界（§4.1.6.1）。初始化后为 1。
-pub fn RangeDecoder::tell(self : RangeDecoder) -> Int {
+pub fn RangeDecoder::tell(self : RangeDecoder) -> Int32 {
   self.nbits_total() - self.ilog_rng()
 }
 
@@ -281,7 +287,7 @@ pub fn RangeDecoder::tell(self : RangeDecoder) -> Int {
 ///
 /// 比特分配例程要求它与编码端 bit-exact 一致；满足
 /// `ec_tell() == ceil(ec_tell_frac() / 8)`。
-pub fn RangeDecoder::tell_frac(self : RangeDecoder) -> Int {
+pub fn RangeDecoder::tell_frac(self : RangeDecoder) -> Int32 {
   let nbits_total = self.nbits_total()
   let mut lg = self.ilog_rng()
   let mut r = self.rng >> (lg - 16)

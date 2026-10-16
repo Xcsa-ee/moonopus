@@ -17,33 +17,33 @@
 
 ///|
 /// 位分辨率：范围解码器按 1/8 bit 计位（celt/entcode.h 的 BITRES）。
-pub const CEL_BITRES : Int = 3
+pub const CEL_BITRES : Int32 = 3
 
 ///|
 /// 第二次二分的步数（rate.c 的 ALLOC_STEPS）。
-const CEL_ALLOC_STEPS : Int = 6
+const CEL_ALLOC_STEPS : Int32 = 6
 
 ///|
 /// 细能量偏移量（celt/rate.h 的 FINE_OFFSET）。
-const CEL_FINE_OFFSET : Int = 21
+const CEL_FINE_OFFSET : Int32 = 21
 
 ///|
 /// 静态分配向量的条数（模式结构体的 nbAllocVectors，对应 Table 57 的 11 列）。
-const CEL_NB_ALLOC_VECTORS : Int = 11
+const CEL_NB_ALLOC_VECTORS : Int32 = 11
 
 ///|
 /// 分配结果。字段含义与参考实现的同名形参一致。
 pub struct CeltAllocation {
   /// 每带交给 PVQ 的位数，单位 1/8 bit（对应参考实现的 pulses/bits）
-  pulses : Array[Int]
+  pulses : Array[Int32]
   /// 每带的细能量位数（0..CEL_MAX_FINE_BITS）
-  ebits : Array[Int]
+  ebits : Array[Int32]
   /// 每带是否进入收尾细能量轮（1 = 优先）
-  fine_priority : Array[Int]
+  fine_priority : Array[Int32]
   /// 实际编码的带数，其后的带不编码
-  coded_bands : Int
+  coded_bands : Int32
   /// 重平衡后剩下的位数，单位 1/8 bit（交由 quant_all_bands 再平衡）
-  balance : Int
+  balance : Int32
 }
 
 ///|
@@ -53,7 +53,7 @@ pub struct CeltAllocation {
 /// `-1` 是规范为分配结束预留的那 1 bit，再减去解码器已用位数
 /// （ec_tell_frac 本身就是 1/8 bit 单位）。反抵消（anti-collapse）的预留
 /// 由帧解码阶段另行扣除。
-pub fn celt_alloc_total(frame_bytes : Int, dec : RangeDecoder) -> Int {
+pub fn celt_alloc_total(frame_bytes : Int32, dec : RangeDecoder) -> Int32 {
   frame_bytes * 8 * (1 << CEL_BITRES) - dec.tell_frac() - 1
 }
 
@@ -63,7 +63,7 @@ pub fn celt_alloc_total(frame_bytes : Int, dec : RangeDecoder) -> Int {
 /// 余量分配处的 `left` 在规范外情况下可能为负；参考实现把它按 opus_uint32
 /// 重解释后再除，这里照搬同一位型语义以保证两端一致。对非负输入它就是
 /// 普通整除。结果按 32 位回写成 Int，对应 C 把 uint32 存回 opus_int32。
-fn celt_udiv(n : Int, d : Int) -> Int {
+fn celt_udiv(n : Int32, d : Int32) -> Int32 {
   let un = n.to_int64() & 0xFFFFFFFFL
   let q = un / (d.to_int64() & 0xFFFFFFFFL)
   let lo = q & 0xFFFFFFFFL
@@ -77,20 +77,20 @@ fn celt_udiv(n : Int, d : Int) -> Int {
 /// `(codedBands, balance)`。跳过决策会从 `dec` 读 1 个二元符号。
 fn celt_interp_bits2pulses(
   dec : RangeDecoder,
-  start : Int,
-  end : Int,
-  skip_start : Int,
-  bits1 : Array[Int],
-  bits2 : Array[Int],
-  thresh : Array[Int],
-  cap : Array[Int],
-  pulses : Array[Int],
-  ebits : Array[Int],
-  fine_priority : Array[Int],
-  total : Int,
-  skip_rsv : Int,
-  lm : Int,
-) -> (Int, Int) {
+  start : Int32,
+  end : Int32,
+  skip_start : Int32,
+  bits1 : Array[Int32],
+  bits2 : Array[Int32],
+  thresh : Array[Int32],
+  cap : Array[Int32],
+  pulses : Array[Int32],
+  ebits : Array[Int32],
+  fine_priority : Array[Int32],
+  total : Int32,
+  skip_rsv : Int32,
+  lm : Int32,
+) -> (Int32, Int32) {
   let mut total = total // 带回分配点时要把预留的 skip 位还回去
   let alloc_floor = 1 << CEL_BITRES // 单声道：C << BITRES
   let log_m = lm << CEL_BITRES
@@ -285,13 +285,13 @@ fn celt_interp_bits2pulses(
 /// 推进——skip 决策要读符号，顺序与帧内其它符号一致。
 pub fn celt_compute_allocation(
   dec : RangeDecoder,
-  start : Int,
-  end : Int,
-  offsets : Array[Int],
-  cap : Array[Int],
-  alloc_trim : Int,
-  total : Int,
-  lm : Int,
+  start : Int32,
+  end : Int32,
+  offsets : Array[Int32],
+  cap : Array[Int32],
+  alloc_trim : Int32,
+  total : Int32,
+  lm : Int32,
 ) -> CeltAllocation {
   let len = CEL_NB_EBANDS
   let pulses = Array::make(len, 0)

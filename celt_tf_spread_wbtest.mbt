@@ -8,10 +8,10 @@
 ///|
 /// 逐项比对每带 TF 调整值与频谱扩展决策，另带两条不依赖金标的规范断言。
 fn expect_tf(
-  got_tf : Array[Int],
-  got_spread : Int,
-  want_tf : Array[Int],
-  want_spread : Int,
+  got_tf : Array[Int32],
+  got_spread : Int32,
+  want_tf : Array[Int32],
+  want_spread : Int32,
   tag : String,
 ) -> Unit raise {
   // Table 56 的 spread PDF 是 {7,2,21,2}/32，四个取值

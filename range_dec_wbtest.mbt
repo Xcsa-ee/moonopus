@@ -9,12 +9,12 @@
 fn RangeDecoder::check_state(
   self : RangeDecoder,
   tag : String,
-  want_sym : Int,
+  want_sym : Int32,
   want_rng : Int64,
   want_val : Int64,
-  want_tell : Int,
-  want_tell_frac : Int,
-  got_sym : Int,
+  want_tell : Int32,
+  want_tell_frac : Int32,
+  got_sym : Int32,
 ) -> Unit raise {
   if got_sym != want_sym {
     @test.fail("\{tag}: symbol \{got_sym} != \{want_sym}")
@@ -36,12 +36,12 @@ fn RangeDecoder::check_state(
 ///|
 fn RangeDecoder::expect_ctx(
   self : RangeDecoder,
-  freqs : Array[Int],
-  want_sym : Int,
+  freqs : Array[Int32],
+  want_sym : Int32,
   want_rng : Int64,
   want_val : Int64,
-  want_tell : Int,
-  want_tell_frac : Int,
+  want_tell : Int32,
+  want_tell_frac : Int32,
 ) -> Unit raise {
   let got = self.decode_ctx(freqs)
   self.check_state(
@@ -52,12 +52,12 @@ fn RangeDecoder::expect_ctx(
 ///|
 fn RangeDecoder::expect_bit(
   self : RangeDecoder,
-  logp : Int,
-  want_sym : Int,
+  logp : Int32,
+  want_sym : Int32,
   want_rng : Int64,
   want_val : Int64,
-  want_tell : Int,
-  want_tell_frac : Int,
+  want_tell : Int32,
+  want_tell_frac : Int32,
 ) -> Unit raise {
   let got = self.decode_bit_logp(logp)
   self.check_state(
@@ -73,12 +73,12 @@ fn RangeDecoder::expect_bit(
 /// `RangeDecoder::decode_bin_fs`）——两者曾被混为一谈，故在此区分。
 fn RangeDecoder::expect_bin(
   self : RangeDecoder,
-  ftb : Int,
-  want_sym : Int,
+  ftb : Int32,
+  want_sym : Int32,
   want_rng : Int64,
   want_val : Int64,
-  want_tell : Int,
-  want_tell_frac : Int,
+  want_tell : Int32,
+  want_tell_frac : Int32,
 ) -> Unit raise {
   let got = self.decode_bit_logp(ftb)
   self.check_state(
@@ -89,12 +89,12 @@ fn RangeDecoder::expect_bin(
 ///|
 fn RangeDecoder::expect_icdf(
   self : RangeDecoder,
-  ftb : Int,
-  want_sym : Int,
+  ftb : Int32,
+  want_sym : Int32,
   want_rng : Int64,
   want_val : Int64,
-  want_tell : Int,
-  want_tell_frac : Int,
+  want_tell : Int32,
+  want_tell_frac : Int32,
 ) -> Unit raise {
   let got = self.decode_icdf([200, 150, 100, 40, 0], ftb)
   self.check_state(
@@ -105,12 +105,12 @@ fn RangeDecoder::expect_icdf(
 ///|
 fn RangeDecoder::expect_uint(
   self : RangeDecoder,
-  ft : Int,
-  want_sym : Int,
+  ft : Int32,
+  want_sym : Int32,
   want_rng : Int64,
   want_val : Int64,
-  want_tell : Int,
-  want_tell_frac : Int,
+  want_tell : Int32,
+  want_tell_frac : Int32,
 ) -> Unit raise {
   let got = self.decode_uint(ft)
   self.check_state(

@@ -16,16 +16,16 @@
 
 ///|
 /// θ 量化的分辨率偏移（rate.h 的 QTHETA_OFFSET）。
-const CEL_QTHETA_OFFSET : Int = 4
+const CEL_QTHETA_OFFSET : Int32 = 4
 
 ///|
 /// N==2 立体声两相模式的偏移（rate.h 的 QTHETA_OFFSET_TWOPHASE）。
-const CEL_QTHETA_OFFSET_TWOPHASE : Int = 16
+const CEL_QTHETA_OFFSET_TWOPHASE : Int32 = 16
 
 ///|
 /// compute_qn 的 2**(i/8)×16384 表（celt_bands.c 的 exp2_table8，
 /// 参考端用浮点 floor 独立算出后在生成器里对拍）。
-let cel_exp2_table8 : Array[Int] = [
+let cel_exp2_table8 : Array[Int32] = [
   16384, 17866, 19483, 21247, 23170, 25267, 27554, 30048,
 ]
 
@@ -33,24 +33,24 @@ let cel_exp2_table8 : Array[Int] = [
 /// split 节点解码结果：θ 换算的全部控制量。
 pub struct CeltThetaSplit {
   /// qn==1 立体声的反相标志（解码读出，disable_inv 时强制 0）
-  inv : Int
+  inv : Int32
   /// mid 的定点幅度（0..32767）
-  imid : Int
+  imid : Int32
   /// side 的定点幅度（0..32767）
-  iside : Int
+  iside : Int32
   /// mid/side 位数划分的倾斜量（1/8 bit·bin 单位）
-  delta : Int
+  delta : Int32
   /// 归一化后的 θ（0..16384）
-  itheta : Int
+  itheta : Int32
   /// 本节点熵解码消耗的位数（1/8 bit）
-  qalloc : Int
+  qalloc : Int32
   /// 量化阶数（1 或偶数，≤256）
-  qn : Int
+  qn : Int32
 }
 
 ///|
 /// 最高有效位位置，即 EC_ILOG(x)（x ≥ 1）。
-fn celt_ilog(x : Int) -> Int {
+fn celt_ilog(x : Int32) -> Int32 {
   let mut v = x
   let mut n = 0
   while v > 0 {
@@ -62,7 +62,7 @@ fn celt_ilog(x : Int) -> Int {
 
 ///|
 /// 按 opus_int16 语义截断（对应 C 把中间量存进 opus_int16）。
-fn celt_s16(v : Int) -> Int {
+fn celt_s16(v : Int32) -> Int32 {
   let u = v & 0xFFFF
   if u >= 0x8000 {
     u - 0x10000
@@ -74,14 +74,14 @@ fn celt_s16(v : Int) -> Int {
 ///|
 /// celt_mathops.h 的 FRAC_MUL16：两操作数按 int16 截断后带 1/2 修正的
 /// 15 位定点乘。右移对负值取 floor，与 C 的算术右移一致。
-fn celt_frac_mul16(a : Int, b : Int) -> Int {
+fn celt_frac_mul16(a : Int32, b : Int32) -> Int32 {
   (16384 + celt_s16(a) * celt_s16(b)) >> 15
 }
 
 ///|
 /// celt_sudiv：向零截断的有符号除法（d > 0）。b+N2*offset 可为负，
 /// C 的 `n/d` 截断语义必须显式复刻（floor 会在负奇数上差 1）。
-fn celt_sudiv(n : Int, d : Int) -> Int {
+fn celt_sudiv(n : Int32, d : Int32) -> Int32 {
   if n < 0 {
     -(-n / d)
   } else {
@@ -92,7 +92,7 @@ fn celt_sudiv(n : Int, d : Int) -> Int {
 ///|
 /// mathops.c 的 isqrt32：二进制位搜索 floor(sqrt(v))——三角 PDF 的
 /// 累计频率反解靠它把 fm/f-tail 映射回 θ 档位。
-pub fn celt_isqrt32(v : Int) -> Int {
+pub fn celt_isqrt32(v : Int32) -> Int32 {
   let mut g = 0
   let mut bshift = (celt_ilog(v) - 1) >> 1
   let mut b = 1 << bshift
@@ -113,7 +113,7 @@ pub fn celt_isqrt32(v : Int) -> Int {
 /// celt_bands.c 的 bitexact_cos：全平台位一致的余弦近似，输入是
 /// 0..16384 的 1/16384 弧度格点（0 与 16384 由调用方先行特判，
 /// 格点最小步长 64 保证中间量不越过 int16 断言域）。
-pub fn celt_bitexact_cos(x : Int) -> Int {
+pub fn celt_bitexact_cos(x : Int32) -> Int32 {
   let tmp = (4096 + x * x) >> 13
   let x2 = celt_s16(
     32767 -
@@ -129,7 +129,7 @@ pub fn celt_bitexact_cos(x : Int) -> Int {
 ///|
 /// celt_bands.c 的 bitexact_log2tan：log2(tan) 的定点近似，
 /// `delta = FRAC_MUL16((N-1)<<7, log2tan(iside, imid))` 消费其结果。
-pub fn celt_bitexact_log2tan(isin : Int, icos : Int) -> Int {
+pub fn celt_bitexact_log2tan(isin : Int32, icos : Int32) -> Int32 {
   let lc = celt_ilog(icos)
   let ls = celt_ilog(isin)
   let s = isin << (15 - ls)
@@ -148,12 +148,12 @@ pub fn celt_bitexact_log2tan(isin : Int, icos : Int) -> Int {
 /// 上限 8<<BITRES 保证立体声 itheta==16384 时 side 侧仍能编出脉冲；
 /// 结果为 1 或偶数。
 pub fn celt_compute_qn(
-  n : Int,
-  b : Int,
-  offset : Int,
-  pulse_cap : Int,
+  n : Int32,
+  b : Int32,
+  offset : Int32,
+  pulse_cap : Int32,
   stereo : Bool,
-) -> Int {
+) -> Int32 {
   let mut n2 = 2 * n - 1
   if stereo && n == 2 {
     n2 -= 1
@@ -181,18 +181,18 @@ pub fn celt_compute_qn(
 /// 做。返回 `(split, b 减 qalloc 后, fill 按 itheta 掩蔽后)`。
 pub fn celt_compute_theta(
   dec : RangeDecoder,
-  band : Int,
-  lm : Int,
-  n : Int,
-  b : Int,
-  blocks : Int,
-  blocks0 : Int,
+  band : Int32,
+  lm : Int32,
+  n : Int32,
+  b : Int32,
+  blocks : Int32,
+  blocks0 : Int32,
   stereo : Bool,
-  intensity : Int,
-  remaining_bits : Int,
+  intensity : Int32,
+  remaining_bits : Int32,
   disable_inv : Bool,
-  fill : Int,
-) -> (CeltThetaSplit, Int, Int) {
+  fill : Int32,
+) -> (CeltThetaSplit, Int32, Int32) {
   let pulse_cap = cel_log_n[band] + (lm << CEL_BITRES)
   let offset = (pulse_cap >> 1) -
     (if stereo && n == 2 {

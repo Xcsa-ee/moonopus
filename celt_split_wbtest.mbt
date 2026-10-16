@@ -13,10 +13,10 @@
 fn expect_theta(
   dec : RangeDecoder,
   got : CeltThetaSplit,
-  b_after : Int,
-  fill_after : Int,
-  want : Array[Int],
-  tell_before : Int,
+  b_after : Int32,
+  fill_after : Int32,
+  want : Array[Int32],
+  tell_before : Int32,
   tag : String,
 ) -> Unit raise {
   if got.qn != 1 && (got.qn < 2 || got.qn > 256 || got.qn % 2 != 0) {
@@ -64,11 +64,11 @@ fn expect_theta(
 /// 同时校验不依赖金标的账目与 PVQ 不变量。
 fn expect_partition(
   got : CeltPartitionResult,
-  band : Int,
-  remaining_init : Int,
-  want_splits : Array[Int],
-  want_leaves : Array[Int],
-  remaining_end : Int,
+  band : Int32,
+  remaining_init : Int32,
+  want_splits : Array[Int32],
+  want_leaves : Array[Int32],
+  remaining_end : Int32,
   tag : String,
 ) -> Unit raise {
   if got.splits.length() * 7 != want_splits.length() {

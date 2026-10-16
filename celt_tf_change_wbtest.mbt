@@ -14,7 +14,7 @@
 ///|
 /// 结构参数网格：b 取 1/2/4/8（长块与 M=2^LM 的瞬态帧），n 取对应的
 /// 常见带宽（Table 55 里出现过的 1/2/3/4/8/12/24）。
-fn tfc_grid() -> Array[(Int, Int)] {
+fn tfc_grid() -> Array[(Int32, Int32)] {
   [
     (1, 1),
     (2, 1),
@@ -46,13 +46,13 @@ fn tfc_grid() -> Array[(Int, Int)] {
 
 ///|
 /// §4.3.1 解出的 TF 调整取值范围（Table 60-63 的最大正值与最小负值）。
-fn tfc_changes() -> Array[Int] {
+fn tfc_changes() -> Array[Int32] {
   [-3, -2, -1, 0, 1, 2, 3]
 }
 
 ///|
 /// 确定性测试向量：取值分散且有正有负，恒等/全零向量掩盖不了错误。
-fn tfc_input(n : Int) -> Array[Double] {
+fn tfc_input(n : Int32) -> Array[Double] {
   let x = Array::make(n, 0.0)
   for i in 0..<n {
     x[i] = ((i * 37 + 11) % 23).to_double() / 11.0 - 1.0

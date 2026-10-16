@@ -31,7 +31,7 @@ priv struct CeltBandCtx {
   lowband : Array[Double]
   has_lowband : Bool
   // 展宽旋转的档位（§4.3.4.3 的 spread 决策）
-  spread : Int
+  spread : Int32
   // lcg seed 出参（初值由调用方放入）
   seed : Array[Int64]
 }
@@ -40,21 +40,21 @@ priv struct CeltBandCtx {
 /// 一个叶节点的解码控制量（前序排列于 CeltPartitionResult.leaves）。
 pub struct CeltPartitionLeaf {
   /// 叶的维度 N
-  n : Int
+  n : Int32
   /// 该叶的时间块数 B（随分割折半、随升频翻倍后的值）
-  blocks : Int
+  blocks : Int32
   /// 该叶的 LM（分割到顶为 -1）
-  lm : Int
+  lm : Int32
   /// 进入叶时的可用位数（1/8 bit）
-  b : Int
+  b : Int32
   /// bits2pulses 的结果（经预算循环回退后的伪脉冲索引）
-  q : Int
+  q : Int32
   /// 实际占用位数 pulses2bits(q)（预算扣减量）
-  used : Int
+  used : Int32
   /// 叶上的 fill 位图（经过带级与分割级变换后的最终值）
-  fill : Int
+  fill : Int32
   /// PVQ 解出的脉冲向量；q==0 时为空数组（叶上无熵消费）
-  pulses : Array[Int]
+  pulses : Array[Int32]
 }
 
 ///|
@@ -65,7 +65,7 @@ pub struct CeltPartitionResult {
   /// 叶序列
   leaves : Array[CeltPartitionLeaf]
   /// 结束时的剩余预算（初始值扣掉全部熵消费）
-  remaining_bits : Int
+  remaining_bits : Int32
 }
 
 ///|
@@ -77,13 +77,13 @@ pub struct CeltPartitionResult {
 /// 进入本带时的全局剩余预算（1/8 bit）。
 pub fn celt_decode_quant_partition(
   dec : RangeDecoder,
-  band : Int,
-  lm : Int,
-  n : Int,
-  b : Int,
-  blocks : Int,
-  fill : Int,
-  remaining_bits : Int,
+  band : Int32,
+  lm : Int32,
+  n : Int32,
+  b : Int32,
+  blocks : Int32,
+  fill : Int32,
+  remaining_bits : Int32,
 ) -> CeltPartitionResult {
   let splits : Array[CeltThetaSplit] = []
   let leaves : Array[CeltPartitionLeaf] = []
@@ -114,7 +114,11 @@ fn celt_fill_sample(seed : Int64) -> Double {
 ///|
 /// 叶向量的塌缩位图（celt_vq.c 的 extract_collapse_mask）：B≤1 恒 1，
 /// 否则按 N/B 分块，块内任一系数非零则该位为 1。
-fn celt_extract_collapse_mask(y : Array[Int], n : Int, blocks : Int) -> Int {
+fn celt_extract_collapse_mask(
+  y : Array[Int32],
+  n : Int32,
+  blocks : Int32,
+) -> Int32 {
   if blocks <= 1 {
     return 1
   }
@@ -137,11 +141,11 @@ fn celt_extract_collapse_mask(y : Array[Int], n : Int, blocks : Int) -> Int {
 /// 守卫与 celt_exp_rotation 自身的早退一致，避免无谓分配。
 fn celt_rotate_band(
   x : Array[Double],
-  off : Int,
-  n : Int,
-  blocks : Int,
-  k : Int,
-  spread : Int,
+  off : Int32,
+  n : Int32,
+  blocks : Int32,
+  k : Int32,
+  spread : Int32,
 ) -> Unit {
   if spread == 0 || 2 * k >= n {
     return
@@ -160,20 +164,20 @@ fn celt_rotate_band(
 /// 递归体：分割或落叶，返回 (更新后的剩余预算, 子树 collapse mask)。
 fn celt_partition_rec(
   dec : RangeDecoder,
-  band : Int,
-  lm : Int,
-  n : Int,
-  b : Int,
-  blocks : Int,
-  fill : Int,
-  remaining : Int,
+  band : Int32,
+  lm : Int32,
+  n : Int32,
+  b : Int32,
+  blocks : Int32,
+  fill : Int32,
+  remaining : Int32,
   splits : Array[CeltThetaSplit],
   leaves : Array[CeltPartitionLeaf],
   ctx : CeltBandCtx,
-  x_off : Int,
-  lb_off : Int,
+  x_off : Int32,
+  lb_off : Int32,
   gain : Double,
-) -> (Int, Int) {
+) -> (Int32, Int32) {
   let blocks0 = blocks
   let off = cel_cache_index50[(lm + 1) * CEL_NB_EBANDS + band]
   let kmax = cel_cache_bits50[off].to_int()
@@ -322,7 +326,7 @@ fn celt_partition_rec(
     used = celt_pulses2bits(band, lm, q)
     remaining_leaf -= used
   }
-  let mut pulses : Array[Int] = []
+  let mut pulses : Array[Int32] = []
   let mut leaf_cm = 0
   if q != 0 {
     pulses = celt_decode_pulses(dec, n, celt_get_pulses(q))

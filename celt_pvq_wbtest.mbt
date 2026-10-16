@@ -106,8 +106,8 @@ test "V(N,K) 随 N 单调不减" {
 /// 守恒本身（Σ|X| = K）由上面那条穷举测试独立保证——这里比的是两侧一致，
 /// 用来把失败定位到具体下标。
 fn expect_pulses(
-  got : Array[Int],
-  want : Array[Int],
+  got : Array[Int32],
+  want : Array[Int32],
   tag : String,
 ) -> Unit raise {
   if got.length() != want.length() {

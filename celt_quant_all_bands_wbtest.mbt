@@ -11,8 +11,8 @@
 fn expect_qab(
   x : Array[Double],
   want_x : Array[Double],
-  masks : Array[Int],
-  want_masks : Array[Int],
+  masks : Array[Int32],
+  want_masks : Array[Int32],
   seed : Int64,
   want_seed : Int64,
   tag : String,
@@ -41,9 +41,9 @@ test "空带窗不消费熵不改状态" {
   let before_tell = dec.tell()
   let before_frac = dec.tell_frac()
   let x : Array[Double] = Array::make(120, 0.0)
-  let masks : Array[Int] = Array::make(21, 0)
-  let pulses : Array[Int] = Array::make(21, 0)
-  let tf_res : Array[Int] = Array::make(21, 0)
+  let masks : Array[Int32] = Array::make(21, 0)
+  let pulses : Array[Int32] = Array::make(21, 0)
+  let tf_res : Array[Int32] = Array::make(21, 0)
   let seed2 = celt_quant_all_bands(
     dec, x, 3, 3, 0, false, pulses, tf_res, 0, 1000, 0, 0, 7L, masks,
   )

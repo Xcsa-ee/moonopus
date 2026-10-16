@@ -10,8 +10,8 @@
 /// 所以整份比对，不只看总数。
 fn expect_alloc_flags(
   got : CeltAllocFlags,
-  want_offsets : Array[Int],
-  want_alloc_trim : Int,
+  want_offsets : Array[Int32],
+  want_alloc_trim : Int32,
   tag : String,
 ) -> Unit raise {
   // §4.3.3：trim 是 0..10 的整数，5 表示不加不减。icdf 表若有 11 项之外
